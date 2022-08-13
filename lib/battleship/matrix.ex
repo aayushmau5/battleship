@@ -13,6 +13,10 @@ defmodule Battleship.Matrix do
     end)
   end
 
+  def get(matrix, position) when is_list(position) do
+    get_in(matrix, position)
+  end
+
   def set(matrix, value, position) when is_list(position) do
     put_in(matrix, position, value)
   end

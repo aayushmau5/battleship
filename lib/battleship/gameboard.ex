@@ -11,7 +11,11 @@ defmodule Battleship.Gameboard do
   def put_ship(board, ship, [start_position, end_position]),
     do: Matrix.set_value_in_range(board, ship, [start_position, end_position])
 
-  def attack(board, [row, column]), do: Matrix.set(board, -1, [row, column])
+  def attack(board, [row, column]) do
+    previous_value = Matrix.get(board, [row, column])
+    new_board = Matrix.set(board, -1, [row, column])
+    %{board: new_board, hit?: previous_value > 0}
+  end
 
   def has_won?(board) do
     ship_present? =
