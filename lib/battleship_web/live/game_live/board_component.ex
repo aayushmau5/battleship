@@ -6,9 +6,9 @@ defmodule BattleshipWeb.GameLive.BoardComponent do
     <div>
       <h1>Player board</h1>
       <%= for row <- 0..9 do %>
-        <div>
+        <div class="flex gap-10">
           <%= for col <- 0..9 do %>
-            <div phx-value-row={row} phx-value-col={col}><%= row %> <%= col %></div>
+            <div phx-value-row={row} phx-value-col={col}><%= row %><%= col %></div>
           <% end %>
         </div>
       <% end %>
