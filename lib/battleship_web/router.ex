@@ -17,7 +17,7 @@ defmodule BattleshipWeb.Router do
   scope "/", BattleshipWeb do
     pipe_through(:browser)
 
-    live("/", GameLive.Index, :index)
+    live("/", GameLive.Index)
   end
 
   # Other scopes may use custom stacks.

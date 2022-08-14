@@ -1,0 +1,18 @@
+<div>
+	<h1 class="text-xl">Place you ships</h1>
+
+	<%= if @edit do %>
+		<p>Current ship: <%= @ship %></p>
+	<% end %>
+
+	<p>Axis: <%= String.capitalize(@axis) %> </p>
+	<button phx-target={@myself} phx-click="change-axis">Change axis</button>
+
+	<%= if @error do %>
+		<p><%= @error %></p>
+	<% end %>
+
+	<.live_component module={BattleshipWeb.GameLive.BoardComponent} id="edit-board" gameboard={@gameboard} enable_edit={@edit} target={@myself} />
+
+	<button phx-click="play" class="text-green-300">Play</button>
+</div>

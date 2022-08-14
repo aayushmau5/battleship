@@ -1,15 +1,22 @@
 defmodule Battleship.Gameboard do
   alias Battleship.Matrix
 
-  def generate_board(size \\ 10), do: Matrix.generate(size)
+  @board_size 10
+
+  def generate_board, do: Matrix.generate(@board_size)
 
   @doc """
   position: [start, end]
   position: [[0,0], [0,4]]
   """
-  # TODO: handle map length doesn't automatically increase(maybe add a guard clause)
-  def put_ship(board, ship, [start_position, end_position]),
-    do: Matrix.set_value_in_range(board, ship, [start_position, end_position])
+  def put_ship(board, ship, [start_position, end_position])
+      when is_list(start_position) and is_list(end_position) do
+    if in_range?(end_position, @board_size - 1) do
+      {:ok, Matrix.set_value_in_range(board, ship, [start_position, end_position])}
+    else
+      {:error, :out_of_range}
+    end
+  end
 
   def attack(board, [row, column]) do
     previous_value = Matrix.get(board, [row, column])
@@ -24,5 +31,9 @@ defmodule Battleship.Gameboard do
       end)
 
     !ship_present?
+  end
+
+  defp in_range?([row, col], limit) do
+    row <= limit and col <= limit
   end
 end

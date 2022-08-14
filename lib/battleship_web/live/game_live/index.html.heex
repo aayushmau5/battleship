@@ -1,2 +1,7 @@
 <h1>Battleship</h1>
-<.live_component module={BattleshipWeb.GameLive.BoardComponent} id="player_board" />
+
+<%= case @action  do %>
+	<% :index -> %> <button phx-click="edit" class="text-green-300">Edit</button>
+	<% :edit -> %> <.live_component module={BattleshipWeb.GameLive.EditComponent} id="edit-component" gameboard={@gameboard} />
+	<% :play -> %> <.live_component module={BattleshipWeb.GameLive.PlayComponent} id="play-component" gameboard={@gameboard} />
+<% end %>
