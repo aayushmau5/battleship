@@ -12,7 +12,7 @@ defmodule Battleship.Gameboard do
   def put_ship(board, ship, [start_position, end_position])
       when is_list(start_position) and is_list(end_position) do
     if in_range?(end_position, @board_size - 1) do
-      {:ok, Matrix.set_value_in_range(board, ship, [start_position, end_position])}
+      Matrix.set_value_in_range(board, ship, [start_position, end_position])
     else
       {:error, :out_of_range}
     end

@@ -21,16 +21,27 @@ defmodule Battleship.Matrix do
     put_in(matrix, position, value)
   end
 
-  def set_value_in_range(matrix, value, [start_position, end_position]) do
-    [start_row, start_column] = start_position
-    [end_row, end_column] = end_position
+  def set_value_in_range(matrix, value, [[start_row, start_column], [end_row, end_column]]) do
+    row_range = start_row..end_row
+    col_range = start_column..end_column
 
-    start_row..end_row
-    |> Enum.reduce(matrix, fn row, acc ->
-      start_column..end_column
-      |> Enum.reduce(acc, fn column, acc ->
-        set(acc, value, [row, column])
-      end)
+    if element_already_present?(matrix, row_range, col_range) do
+      {:error, :element_already_present}
+    else
+      {:ok,
+       row_range
+       |> Enum.reduce(matrix, fn row, acc ->
+         col_range
+         |> Enum.reduce(acc, fn column, acc ->
+           set(acc, value, [row, column])
+         end)
+       end)}
+    end
+  end
+
+  defp element_already_present?(matrix, row_range, col_range) do
+    Enum.any?(row_range, fn row ->
+      Enum.any?(col_range, fn col -> get(matrix, [row, col]) > 0 end)
     end)
   end
 end

@@ -5,13 +5,18 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign(:action, :index) |> assign(:gameboard, Gameboard.generate_board())}
+    {:ok,
+     socket
+     |> assign(:action, :index)
+     |> assign(:gameboard, Gameboard.generate_board())}
   end
 
   @impl true
   def handle_event("index", _params, socket) do
     {:noreply,
-     socket |> assign(:action, :index) |> assign(:gameboard, Gameboard.generate_board())}
+     socket
+     |> assign(:action, :index)
+     |> assign(:gameboard, Gameboard.generate_board())}
   end
 
   @impl true

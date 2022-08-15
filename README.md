@@ -26,10 +26,22 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 - After successful entry, they are matched against another play available(if not available, give an option to play against a computer). The opposite players are matched automatically.
 - After successful match, the user is redirected to a play page where they against another player(handle cases: what if a player leaves a game in middle).
 
-## Approach
+## Approach(logical)
 
 - 10 x 10 matrix(all zero)
 - 4 types of ships based on their length(all different)
 - When user places a ship of certain length, we set the length in the given matrix at the desired position
 - If a ship is hit, we set -1 at that position
 - Check the matrix for any natural number, if there is none, user has won the game
+
+## Approach(application)
+
+- When a user plays a game against another player, they will generate a "room id", which is will be stored in an :ets table(or mnesia). When another player also plays a game, our application will look up on the table to see any free room. On a free room, user will join that room. At this point, we will remove that room id from the table.
+- Perhaps check and use Pheonix channels. Checkout the YT video to see the preferred approach.
+- On enemy board click, send the row and col id to another processes liveview, and attack at the position. Need to handle styles for hit, and miss.
+
+## Todo
+
+- Add computer player
+- Add the ability to play against another player
+- If a player leaves the game, another player should be joined with a new player. But remove all the attacks from current player, and preserve their ship position.(Basically resetting the game without remove the ship positions)

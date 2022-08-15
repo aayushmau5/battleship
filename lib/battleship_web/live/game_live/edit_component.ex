@@ -39,6 +39,14 @@ defmodule BattleshipWeb.GameLive.EditComponent do
         {:noreply,
          socket
          |> assign(:error, "Out of range. Please select another slot.")}
+
+      {:error, :element_already_present} ->
+        {:noreply,
+         socket
+         |> assign(
+           :error,
+           "A ship is already present in that slot range. Please select another slot."
+         )}
     end
   end
 

@@ -1,8 +1,9 @@
 <div>
 	<h1>Play game</h1>
 
-	<div>
+	<div class="flex gap-10">
 		<.live_component module={BattleshipWeb.GameLive.BoardComponent} id="player_board" gameboard={@gameboard} enable_edit={false} target={@myself} />
+		<.live_component module={BattleshipWeb.GameLive.BoardComponent} id="enemy_board" gameboard={@enemy_gameboard} enable_edit={true} target={@myself} />
 	</div>
 
 	<button phx-click="index" class="text-green-300">Home</button>
