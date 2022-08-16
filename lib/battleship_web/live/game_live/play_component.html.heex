@@ -3,6 +3,10 @@
 
 	<p><%= String.capitalize(@play_chance) %> chance</p>
 
+  <%= if @has_won do %>
+   <p><%= String.capitalize(@winner) %> won the game!</p>
+  <% end %>
+
 	<div class="flex gap-10">
 		<.live_component 
 			id="player_board" 

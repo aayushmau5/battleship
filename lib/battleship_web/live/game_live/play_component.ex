@@ -15,9 +15,22 @@ defmodule BattleshipWeb.GameLive.PlayComponent do
   end
 
   @impl true
-  # this "click" event doesn't really have any specific parent. Maybe see if it's beneficial to move up to the parent component?
-  # don't where from where this "click" event is originated?
+  def update(assigns, socket) do
+    socket = assign(socket, assigns)
+
+IO.puts("update ran")
+IO.puts(assigns.has_won)
+    if assigns.has_won do
+      {:ok, socket |> assign(:edit_enemy_board, false)}
+    else
+      {:ok, socket}
+    end
+  end
+
+  @impl true
+  # this click event should always originate from current player clicking on enemy's board
   def handle_event("click", %{"row" => row, "col" => col}, socket) do
+    # TODO: set timeouts so that computer takes some time to attack
     # computer or another player will get a new chance here in this handler.
     new_enemy_board =
       Gameboard.attack(socket.assigns.enemy_gameboard, [
@@ -30,8 +43,6 @@ defmodule BattleshipWeb.GameLive.PlayComponent do
       {:update_enemy_gameboard, %{enemy_gameboard: new_enemy_board}}
     )
 
-    # send(self(), {:computer_attack, %{position: Computer.get_attack_position()}}) # This should handle already attack positions as well.
-
     {:noreply,
      socket
      |> assign(:play_chance, "computer")
@@ -39,9 +50,10 @@ defmodule BattleshipWeb.GameLive.PlayComponent do
      |> computer_chance(socket.assigns.gameboard)}
   end
 
-  def computer_chance(socket, player_board) do
-    attack_position = Computer.get_attack_position(player_board)
-    new_player_gameboard = Gameboard.attack(player_board, attack_position)
+  defp computer_chance(socket, player_board) do
+    new_player_gameboard =
+      Gameboard.attack(player_board, Computer.get_attack_position(player_board))
+
     send(self(), {:update_player_gameboard, %{gameboard: new_player_gameboard}})
 
     socket

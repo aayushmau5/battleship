@@ -3,5 +3,5 @@
 <%= case @action  do %>
 	<% :index -> %> <button phx-click="edit" class="text-green-300">Edit</button>
 	<% :edit -> %> <.live_component module={BattleshipWeb.GameLive.EditComponent} id="edit-component" gameboard={@gameboard} />
-	<% :play -> %> <.live_component module={BattleshipWeb.GameLive.PlayComponent} id="play-component" gameboard={@gameboard} enemy_gameboard={@enemy_gameboard} />
+	<% :play -> %> <.live_component module={BattleshipWeb.GameLive.PlayComponent} id="play-component" gameboard={@gameboard} enemy_gameboard={@enemy_gameboard} has_won={@has_won} winner={@winner} />
 <% end %>
