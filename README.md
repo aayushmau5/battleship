@@ -48,3 +48,5 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 - Add the ability to play against another player
 - If a player leaves the game, another player should be joined with a new player. But remove all the attacks from current player, and preserve their ship position.(Basically resetting the game without remove the ship positions)
 - Set pubsub in board component, and let it all handle the internal logic
+- Better design
+- Add SEO tags
