@@ -10,7 +10,8 @@ defmodule BattleshipWeb.GameLive.EditComponent do
      |> assign(:ship, Ship.get_ship(5))
      |> assign(:axis, "x")
      |> assign(:edit, true)
-     |> assign(:error, nil)}
+     |> assign(:error, nil)
+     |> assign(:access_next_page, false)}
   end
 
   @impl true
@@ -55,7 +56,7 @@ defmodule BattleshipWeb.GameLive.EditComponent do
 
   defp change_ship(socket, current_ship) when current_ship <= 2 do
     send(self(), {:edit_player_gameboard, %{gameboard: socket.assigns.gameboard}})
-    assign(socket, :edit, false)
+    socket |> assign(:edit, false) |> assign(:access_next_page, true)
   end
 
   defp add_ship_to_gameboard(board, ship, [initial_row, inital_col], "x") do

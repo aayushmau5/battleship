@@ -1,14 +1,9 @@
-<h1>Battleship</h1>
+<h1 class="text-center font-bold text-5xl text-teal-400">Battleship</h1>
 
-<%= case @action  do %>
-	<% :index -> %> <button phx-click="edit" class="text-green-300">Play against computer</button>
-	<% :edit -> %> <.live_component module={BattleshipWeb.GameLive.EditComponent} id="edit-component" gameboard={@gameboard} />
-	<% :play -> %> <.live_component
-										id="play-component"
-										module={BattleshipWeb.GameLive.PlayComponent}
-										gameboard={@gameboard}
-										enemy_gameboard={@enemy_gameboard}
-										has_won={@has_won}
-										winner={@winner}
-									/>
-<% end %>
+<div class="p-4 mt-10">
+	<%= case @action  do %>
+		<% :index -> %> <.live_component id="home-component" module={BattleshipWeb.GameLive.HomeComponent} />
+		<% :edit -> %> <.live_component id="edit-component" module={BattleshipWeb.GameLive.EditComponent} gameboard={@gameboard} />
+		<% :play -> %> <.live_component id="play-component" module={BattleshipWeb.GameLive.PlayComponent} gameboard={@gameboard} enemy_gameboard={@enemy_gameboard} has_won={@has_won} winner={@winner} />
+	<% end %>
+</div>

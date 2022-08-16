@@ -4,8 +4,13 @@ defmodule BattleshipWeb.LiveHelpers do
 
   alias Phoenix.LiveView.JS
 
-  def render_board(assigns) do
+  def btn(assigns, click: click, class: class, disabled: disabled) do
     ~H"""
+    <%= if disabled do %>
+      <button class={class} disabled=""><%= assigns %></button>
+    <% else %>
+      <button class={class} phx-click={click}><%= assigns %></button>
+    <% end %>
     """
   end
 end

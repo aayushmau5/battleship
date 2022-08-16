@@ -9,10 +9,7 @@
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
-  <body class="bg-stone-900 p-4 text-white">
-    <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-      <%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %>
-    <% end %>
+  <body class="bg-zinc-900 p-4 text-white">
     <%= @inner_content %>
   </body>
 </html>

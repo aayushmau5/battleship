@@ -45,10 +45,10 @@ defmodule BattleshipWeb.GameLive.BoardComponent do
   def assign_proper_class(_, -1), do: assign_hit_class()
   def assign_proper_class(_, -2), do: assign_miss_class()
 
-  defp assign_color_on_value(5), do: "bg-lime-300"
-  defp assign_color_on_value(4), do: "bg-green-300"
-  defp assign_color_on_value(3), do: "bg-cyan-300"
-  defp assign_color_on_value(2), do: "bg-pink-300"
+  defp assign_color_on_value(5), do: "bg-lime-400"
+  defp assign_color_on_value(4), do: "bg-green-400"
+  defp assign_color_on_value(3), do: "bg-cyan-400"
+  defp assign_color_on_value(2), do: "bg-pink-400"
 
   defp assign_hit_class, do: "bg-red-400"
   defp assign_miss_class, do: "bg-slate-100"
