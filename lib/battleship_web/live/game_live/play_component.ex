@@ -18,8 +18,6 @@ defmodule BattleshipWeb.GameLive.PlayComponent do
   def update(assigns, socket) do
     socket = assign(socket, assigns)
 
-IO.puts("update ran")
-IO.puts(assigns.has_won)
     if assigns.has_won do
       {:ok, socket |> assign(:edit_enemy_board, false)}
     else

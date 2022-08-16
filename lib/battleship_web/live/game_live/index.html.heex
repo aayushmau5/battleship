@@ -1,7 +1,14 @@
 <h1>Battleship</h1>
 
 <%= case @action  do %>
-	<% :index -> %> <button phx-click="edit" class="text-green-300">Edit</button>
+	<% :index -> %> <button phx-click="edit" class="text-green-300">Play against computer</button>
 	<% :edit -> %> <.live_component module={BattleshipWeb.GameLive.EditComponent} id="edit-component" gameboard={@gameboard} />
-	<% :play -> %> <.live_component module={BattleshipWeb.GameLive.PlayComponent} id="play-component" gameboard={@gameboard} enemy_gameboard={@enemy_gameboard} has_won={@has_won} winner={@winner} />
+	<% :play -> %> <.live_component
+										id="play-component"
+										module={BattleshipWeb.GameLive.PlayComponent}
+										gameboard={@gameboard}
+										enemy_gameboard={@enemy_gameboard}
+										has_won={@has_won}
+										winner={@winner}
+									/>
 <% end %>
