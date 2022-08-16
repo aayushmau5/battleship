@@ -34,18 +34,17 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 - If a ship is hit, we set -1 at that position, if it is a miss, we assign -2 at that position
 - Check the matrix for any natural number, if there is none, user has won the game
 
-## Approach(application)
+## Approach(application) (Not final)
 
 - When a user plays a game against another player, they will generate a "room id", which is will be stored in an :ets table(or mnesia). When another player also plays a game, our application will look up on the table to see any free room. On a free room, user will join that room. At this point, we will remove that room id from the table.
-- Perhaps check and use Pheonix channels. Checkout the YT video to see the preferred approach.
 - On enemy board click, send the row and col id to another processes liveview, and attack at the position. Need to handle styles for hit, and miss.
 
 ## Todo
 
-- Add computer player
-- Add the ability to play against another player
-- If a player leaves the game, another player should be joined with a new player. But remove all the attacks from current player, and preserve their ship position.(Basically resetting the game without remove the ship positions)
-- Set pubsub in board component, and let it all handle the internal logic
 - Improve performance
 - Refactor code
 - Fix bug: a flash of enemy board after clicking on play
+- Add auto deploy using GH actions: https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
+- Add the ability to play against another player
+- If a player leaves the game, another player should be joined with a new player. But remove all the attacks from current player, and preserve their ship position.(Basically resetting the game without remove the ship positions)
+- Set pubsub in board component, and let it all handle the internal logic
