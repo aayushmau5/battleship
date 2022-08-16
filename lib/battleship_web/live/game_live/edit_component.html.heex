@@ -12,7 +12,14 @@
 		<p><%= @error %></p>
 	<% end %>
 
-	<.live_component module={BattleshipWeb.GameLive.BoardComponent} id="edit-board" gameboard={@gameboard} enable_edit={@edit} target={@myself} />
+	<.live_component 
+		id="edit-board" 
+		module={BattleshipWeb.GameLive.BoardComponent} 
+		gameboard={@gameboard} 
+		enable_edit={@edit} 
+		target={@myself} 
+		show_ships={true} 
+	/>
 
-	<button phx-click="play" class="text-green-300">Play</button>
+	<button phx-click="play" class="text-green-300">Play against computer</button>
 </div>

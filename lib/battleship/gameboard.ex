@@ -20,8 +20,12 @@ defmodule Battleship.Gameboard do
 
   def attack(board, [row, column]) do
     previous_value = Matrix.get(board, [row, column])
-    new_board = Matrix.set(board, -1, [row, column])
-    %{board: new_board, hit?: previous_value > 0}
+
+    if previous_value == 0 do
+      Matrix.set(board, -2, [row, column])
+    else
+      Matrix.set(board, -1, [row, column])
+    end
   end
 
   def has_won?(board) do

@@ -8,7 +8,8 @@ defmodule BattleshipWeb.GameLive.Index do
     {:ok,
      socket
      |> assign(:action, :index)
-     |> assign(:gameboard, Gameboard.generate_board())}
+     |> assign(:gameboard, Gameboard.generate_board())
+     |> assign(:enemy_gameboard, %{})}
   end
 
   @impl true
@@ -30,7 +31,20 @@ defmodule BattleshipWeb.GameLive.Index do
   end
 
   @impl true
-  def handle_info({:updated_gameboard, %{gameboard: gameboard}}, socket) do
+  def handle_info({:edit_player_gameboard, %{gameboard: gameboard}}, socket) do
+    # Originates from edit component
     {:noreply, assign(socket, :gameboard, gameboard)}
+  end
+
+  @impl true
+  def handle_info({:update_player_gameboard, %{gameboard: gameboard}}, socket) do
+    # Originates from play component
+    {:noreply, assign(socket, :gameboard, gameboard)}
+  end
+
+  @impl true
+  def handle_info({:update_enemy_gameboard, %{enemy_gameboard: gameboard}}, socket) do
+    # Originates from play component
+    {:noreply, assign(socket, :enemy_gameboard, gameboard)}
   end
 end

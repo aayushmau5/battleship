@@ -1,6 +1,9 @@
 defmodule BattleshipWeb.GameLive.BoardComponent do
   use BattleshipWeb, :live_component
 
+  @doc """
+  This module will be responsible for showing gameboard, showing ships or not showing them, handling edit, showing different type of states.
+  """
   @impl true
   def render(assigns) do
     ~H"""
@@ -11,8 +14,8 @@ defmodule BattleshipWeb.GameLive.BoardComponent do
             <div
               phx-value-row={row}
               phx-value-col={col}
-              class={"border p-4 #{assign_class_on_value(value, assigns.enable_edit)}"}
-              phx-click={if @enable_edit, do: "click", else: ""}
+              class={"border p-4 #{assign_proper_class(assigns, value)}"}
+              phx-click={assign_click(assigns, value)}
               phx-target={@target}
             ></div>
           <% end %>
@@ -22,11 +25,34 @@ defmodule BattleshipWeb.GameLive.BoardComponent do
     """
   end
 
-  defp assign_class_on_value(-1, _), do: "bg-slate-100"
-  defp assign_class_on_value(5, _), do: "bg-lime-300"
-  defp assign_class_on_value(4, _), do: "bg-green-300"
-  defp assign_class_on_value(3, _), do: "bg-cyan-300"
-  defp assign_class_on_value(2, _), do: "bg-pink-300"
-  defp assign_class_on_value(_, true), do: "cursor-pointer hover:bg-slate-100"
-  defp assign_class_on_value(_, false), do: ""
+  def assign_click(%{enable_edit: true}, value) do
+    if value >= 0, do: "click", else: ""
+  end
+
+  def assign_click(%{enable_edit: false}, _value), do: ""
+
+  def assign_proper_class(%{show_ships: true}, value)
+      when value > 0 do
+    assign_color_on_value(value)
+  end
+
+  def assign_proper_class(%{show_ships: false, enable_edit: enable_edit?}, value)
+      when value > 0 do
+    assign_hover_class(enable_edit?)
+  end
+
+  def assign_proper_class(%{enable_edit: enable_edit?}, 0), do: assign_hover_class(enable_edit?)
+  def assign_proper_class(_, -1), do: assign_hit_class()
+  def assign_proper_class(_, -2), do: assign_miss_class()
+
+  defp assign_color_on_value(5), do: "bg-lime-300"
+  defp assign_color_on_value(4), do: "bg-green-300"
+  defp assign_color_on_value(3), do: "bg-cyan-300"
+  defp assign_color_on_value(2), do: "bg-pink-300"
+
+  defp assign_hit_class, do: "bg-red-400"
+  defp assign_miss_class, do: "bg-slate-100"
+
+  defp assign_hover_class(true), do: "cursor-pointer hover:bg-slate-100"
+  defp assign_hover_class(false), do: ""
 end

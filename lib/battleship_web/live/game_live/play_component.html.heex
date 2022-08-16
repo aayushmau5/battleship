@@ -1,9 +1,25 @@
 <div>
 	<h1>Play game</h1>
 
+	<p><%= String.capitalize(@play_chance) %> chance</p>
+
 	<div class="flex gap-10">
-		<.live_component module={BattleshipWeb.GameLive.BoardComponent} id="player_board" gameboard={@gameboard} enable_edit={false} target={@myself} />
-		<.live_component module={BattleshipWeb.GameLive.BoardComponent} id="enemy_board" gameboard={@enemy_gameboard} enable_edit={true} target={@myself} />
+		<.live_component 
+			id="player_board" 
+			module={BattleshipWeb.GameLive.BoardComponent} 
+			gameboard={@gameboard} 
+			enable_edit={false} 
+			target={@myself} 
+			show_ships={true}
+		/>
+		<.live_component 
+			id="enemy_board" 
+			module={BattleshipWeb.GameLive.BoardComponent} 
+			gameboard={@enemy_gameboard} 
+			enable_edit={@edit_enemy_board} 
+			target={@myself} 
+			show_ships={false}
+		/>
 	</div>
 
 	<button phx-click="index" class="text-green-300">Home</button>

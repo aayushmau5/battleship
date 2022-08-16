@@ -54,7 +54,7 @@ defmodule BattleshipWeb.GameLive.EditComponent do
     do: assign(socket, :ship, Ship.get_ship(current_ship - 1))
 
   defp change_ship(socket, current_ship) when current_ship <= 2 do
-    send(self(), {:updated_gameboard, %{gameboard: socket.assigns.gameboard}})
+    send(self(), {:edit_player_gameboard, %{gameboard: socket.assigns.gameboard}})
     assign(socket, :edit, false)
   end
 
