@@ -4,8 +4,15 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Battleship</title>
+    <meta name="description" content="Battleship game made by aayushmau5" />
+    <meta name="og:type" content="website" />
+    <meta name="og:title" content="Battleship" />
+    <meta name="og:url" content="https://aayush-battleship.fly.dev/" />
+    <meta name="og:description" content="Battleship game made by aayushmau5" />
+    <meta name="twitter:title" content="Battleship" />
+    <meta name="twitter:description" content="Battleship game made by aayushmau5" />
     <meta name="csrf-token" content={csrf_token_value()}>
-    <%= live_title_tag assigns[:page_title] || "Battleship" %>
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>

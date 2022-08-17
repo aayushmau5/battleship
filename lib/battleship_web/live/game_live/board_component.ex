@@ -14,7 +14,7 @@ defmodule BattleshipWeb.GameLive.BoardComponent do
             <div
               phx-value-row={row}
               phx-value-col={col}
-              class={"border p-4 #{assign_proper_class(assigns, value)}"}
+              class={"border p-3 md:p-4 #{assign_proper_class(assigns, value)}"}
               phx-click={assign_click(assigns, value)}
               phx-target={@target}
             ></div>

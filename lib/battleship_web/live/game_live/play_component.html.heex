@@ -7,7 +7,7 @@
 	 <p class="my-3">Chance: <span class="font-bold"><%= String.capitalize(@play_chance) %></span></p>
   <% end %>
 
-	<div class="flex gap-10 flex-wrap justify-center">
+	<div class="flex flex-col gap-4 justify-center md:flex-row md:gap-10">
 		<.live_component
 			id="player_board"
 			module={BattleshipWeb.GameLive.BoardComponent}
