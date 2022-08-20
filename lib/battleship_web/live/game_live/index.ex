@@ -22,10 +22,15 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   def handle_event("index", _params, socket) do
+    # Reset player state
     {:noreply,
-     socket
-     |> assign(:action, :index)
-     |> assign(:gameboard, Gameboard.generate_board())}
+     assign(socket,
+       action: :index,
+       gameboard: Gameboard.generate_board(),
+       enemy_gameboard: %{},
+       has_won: false,
+       winner: nil
+     )}
   end
 
   @impl true
