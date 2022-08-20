@@ -12,6 +12,7 @@ defmodule Battleship.Application do
       BattleshipWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: Battleship.PubSub},
+      BattleshipWeb.Presence,
       # Start the Endpoint (http/https)
       BattleshipWeb.Endpoint
       # Start a worker by calling: Battleship.Worker.start_link(arg)

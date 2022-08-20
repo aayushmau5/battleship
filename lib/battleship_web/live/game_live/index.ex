@@ -2,16 +2,22 @@ defmodule BattleshipWeb.GameLive.Index do
   use BattleshipWeb, :live_view
 
   alias Battleship.Gameboard
+  alias BattleshipWeb.Presence
+
+  @player_count_topic "player"
 
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:action, :index)
-     |> assign(:gameboard, Gameboard.generate_board())
-     |> assign(:enemy_gameboard, %{})
-     |> assign(:has_won, false)
-     |> assign(:winner, nil)}
+     |> assign(
+       action: :index,
+       gameboard: Gameboard.generate_board(),
+       enemy_gameboard: %{},
+       has_won: false,
+       winner: nil
+     )
+     |> track_player_count()}
   end
 
   @impl true
@@ -60,5 +66,25 @@ defmodule BattleshipWeb.GameLive.Index do
     else
       {:noreply, socket}
     end
+  end
+
+  @impl true
+  def handle_info(
+        %{event: "presence_diff", payload: %{joins: joins, leaves: leaves}},
+        %{assigns: %{player_count: count}} = socket
+      ) do
+    count = count + map_size(joins) - map_size(leaves)
+    {:noreply, assign(socket, :player_count, count)}
+  end
+
+  defp track_player_count(socket) do
+    count = Presence.list(@player_count_topic) |> map_size()
+
+    if connected?(socket) do
+      BattleshipWeb.Endpoint.subscribe(@player_count_topic)
+      Presence.track(self(), @player_count_topic, socket.id, %{id: socket.id})
+    end
+
+    assign(socket, :player_count, count)
   end
 end

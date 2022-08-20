@@ -2,7 +2,7 @@ defmodule BattleshipWeb.GameLive.BoardComponent do
   use BattleshipWeb, :live_component
 
   @doc """
-  This module will be responsible for showing gameboard, showing ships or not showing them, handling edit, showing different type of states.
+  This module will be responsible for showing gameboard, showing ships or not showing them, handling edit, etc.
   """
   @impl true
   def render(assigns) do
