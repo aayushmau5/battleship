@@ -1,5 +1,6 @@
 <div class="flex flex-col items-center animate-fade-in" id="edit-component">
 	<h1 class="text-2xl font-bold">Place you ships!</h1>
+	<p class="text-sm text-center mt-4">Place your ships on the board below. When you are done placing ships, click play.</p>
 
 	<%= if @edit do %>
 		<p class="mt-4">Current ship length: <span class="text-teal-400 font-bold"><%= @ship %></span></p>
@@ -21,5 +22,12 @@
 		show_ships={true}
 	/>
 
-	<.btn click="play" to="#edit-component" class="text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear disabled:cursor-not-allowed disabled:bg-stone-700" disabled={!@access_next_page}>Play</.btn>
+	<.btn
+		click="play"
+		to="#edit-component"
+		class="text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear disabled:cursor-not-allowed disabled:bg-stone-700"
+		disabled={!@access_next_page}
+	>
+		Play
+	</.btn>
 </div>

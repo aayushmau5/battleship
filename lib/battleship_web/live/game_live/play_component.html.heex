@@ -1,5 +1,8 @@
 <div class="flex flex-col items-center flex-wrap animate-fade-in" id="play-component">
 	<h1 class="text-2xl font-bold">Play game!</h1>
+	<p class="text-sm text-center mt-4">You are playing against computer.</p>
+	<p class="text-sm text-center">Computer's ship placement won't be visible to you. You try to guess in which position your oppnent's ship is, and attack.</p>
+	<p class="text-sm text-center">You either hit or miss. Similarly, computer can attack you. One who first hits all the ships of the opposite player wins.</p>
 
   <%= if @has_won do %>
    <p class="font-bold text-teal-400 my-3 text-xl"><%= String.capitalize(@winner) %> won the game!</p>
