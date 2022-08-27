@@ -1,4 +1,4 @@
-<div class="flex flex-col items-center flex-wrap">
+<div class="flex flex-col items-center flex-wrap animate-fade-in" id="play-component">
 	<h1 class="text-2xl font-bold">Play game!</h1>
 
   <%= if @has_won do %>
@@ -32,5 +32,5 @@
 		</div>
 	</div>
 
-	<button phx-click="index" class="mt-2 text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">End game</button>
+	<.btn click="index" to={"#play-component"} class="mt-2 text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear" disabled={false}>End game</.btn>
 </div>

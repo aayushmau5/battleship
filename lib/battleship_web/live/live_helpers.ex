@@ -4,12 +4,12 @@ defmodule BattleshipWeb.LiveHelpers do
 
   alias Phoenix.LiveView.JS
 
-  def btn(assigns, click: click, class: class, disabled: disabled) do
+  def btn(assigns) do
     ~H"""
-    <%= if disabled do %>
-      <button class={class} disabled=""><%= assigns %></button>
+    <%= if @disabled do %>
+      <button class={@class} disabled=""><%= render_slot(@inner_block) %></button>
     <% else %>
-      <button class={class} phx-click={click}><%= assigns %></button>
+      <button class={@class} phx-click={JS.hide(to: @to, transition: "animate-fade-out") |> JS.push(@click)}><%= render_slot(@inner_block) %></button>
     <% end %>
     """
   end
