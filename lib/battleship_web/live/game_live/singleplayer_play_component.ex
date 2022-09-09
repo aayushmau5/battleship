@@ -1,4 +1,7 @@
-defmodule BattleshipWeb.GameLive.PlayComponent do
+defmodule BattleshipWeb.GameLive.SingleplayerPlayComponent do
+  @moduledoc """
+  Component for single player playing against computer
+  """
   use BattleshipWeb, :live_component
 
   alias Battleship.{Gameboard, Computer}
@@ -51,10 +54,15 @@ defmodule BattleshipWeb.GameLive.PlayComponent do
     new_player_gameboard =
       Gameboard.attack(player_board, Computer.get_attack_position(player_board))
 
-    :timer.apply_after(900, BattleshipWeb.GameLive.PlayComponent, :send_computer_update, [
-      self(),
-      new_player_gameboard
-    ])
+    :timer.apply_after(
+      900,
+      BattleshipWeb.GameLive.SingleplayerPlayComponent,
+      :send_computer_update,
+      [
+        self(),
+        new_player_gameboard
+      ]
+    )
 
     socket
   end
@@ -62,7 +70,7 @@ defmodule BattleshipWeb.GameLive.PlayComponent do
   def send_computer_update(pid, gameboard) do
     send(pid, {:update_player_gameboard, %{gameboard: gameboard}})
 
-    send_update(pid, BattleshipWeb.GameLive.PlayComponent,
+    send_update(pid, BattleshipWeb.GameLive.SingleplayerPlayComponent,
       id: "play-component",
       play_chance: "player",
       edit_enemy_board: true

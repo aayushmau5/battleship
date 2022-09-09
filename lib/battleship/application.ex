@@ -10,6 +10,7 @@ defmodule Battleship.Application do
     children = [
       # Start the Telemetry supervisor
       BattleshipWeb.Telemetry,
+      Battleship.Room,
       # Start the PubSub system
       {Phoenix.PubSub, name: Battleship.PubSub},
       BattleshipWeb.Presence,
