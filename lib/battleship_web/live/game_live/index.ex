@@ -101,7 +101,7 @@ defmodule BattleshipWeb.GameLive.Index do
 
     if count == 2 do
       # a "handshake" step where players send their board data to each other
-      Phoenix.PubSub.broadcast(Battleship.PubSub, room_id, %{
+      Phoenix.PubSub.broadcast_from(Battleship.PubSub, self(), room_id, %{
         event: "handshake",
         from: self(),
         gameboard: socket.assigns.gameboard
@@ -114,12 +114,19 @@ defmodule BattleshipWeb.GameLive.Index do
     end
   end
 
-  def handle_info(%{event: "handshake", from: pid, gameboard: enemy_gameboard}, socket)
-      when pid != self() do
+  def handle_info(%{event: "handshake", gameboard: enemy_gameboard}, socket) do
     {:noreply, socket |> assign(:action, :play) |> assign(:enemy_gameboard, enemy_gameboard)}
   end
 
-  def handle_info(%{event: "handshake"} = _payload, socket), do: {:noreply, socket}
+  def handle_info(
+        %{event: "attack_player", position: %{"row" => row, "col" => col}} = _payload,
+        socket
+      ) do
+    new_board =
+      Gameboard.attack(socket.assigns.gameboard, [String.to_integer(row), String.to_integer(col)])
+
+    {:noreply, socket |> assign(:gameboard, new_board) |> assign(:edit_enemy_board, true)}
+  end
 
   defp track_player_count(socket) do
     count = Presence.list(@player_count_topic) |> map_size()
@@ -139,10 +146,10 @@ defmodule BattleshipWeb.GameLive.Index do
 
     case temp_room_generator() do
       {:new_room, room_id} ->
-        socket |> assign(room_id: room_id) |> assign(first_chance: true)
+        socket |> assign(room_id: room_id) |> assign(edit_enemy_board: true)
 
       {:existing_room, room_id} ->
-        socket |> assign(room_id: room_id) |> assign(first_chance: false)
+        socket |> assign(room_id: room_id) |> assign(edit_enemy_board: false)
     end
   end
 

@@ -4,26 +4,28 @@ defmodule BattleshipWeb.GameLive.MultiplayerPlayComponent do
   """
   use BattleshipWeb, :live_component
 
-  @impl true
-  def update(assigns, socket) do
-    socket =
-      socket
-      |> assign(assigns)
-      |> assign_new(:edit_enemy_board, fn assigns -> assigns.first_chance end)
-
-    {:ok, socket}
-  end
+  alias Battleship.Gameboard
 
   @impl true
   def handle_event("click", position, socket) do
-    dbg(self())
+    %{"row" => row, "col" => col} = position
 
-    Phoenix.PubSub.broadcast(Battleship.PubSub, socket.assigns.room_id, %{
+    new_enemy_board =
+      Gameboard.attack(socket.assigns.enemy_gameboard, [
+        String.to_integer(row),
+        String.to_integer(col)
+      ])
+
+    send(
+      self(),
+      {:update_enemy_gameboard, %{enemy_gameboard: new_enemy_board}}
+    )
+
+    Phoenix.PubSub.broadcast_from(Battleship.PubSub, self(), socket.assigns.room_id, %{
       event: "attack_player",
-      from: self(),
       position: position
     })
 
-    {:noreply, socket}
+    {:noreply, socket |> assign(:edit_enemy_board, false)}
   end
 end
