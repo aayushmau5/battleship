@@ -36,30 +36,21 @@ defmodule BattleshipWeb.GameLive.Index do
   end
 
   @impl true
-  def handle_event("edit", _params, socket) do
-    {:noreply, assign(socket, multiplayer: false, action: :edit)}
-  end
+  def handle_event("edit", _params, socket),
+    do: {:noreply, assign(socket, multiplayer: false, action: :edit)}
 
   @impl true
-  def handle_event("multiplayer", _params, socket) do
-    {:noreply, assign(socket, multiplayer: true, action: :edit)}
-  end
+  def handle_event("multiplayer", _params, socket),
+    do: {:noreply, assign(socket, multiplayer: true, action: :edit)}
 
   @impl true
   # Handle event for multi-player game
-  def handle_event("play", _params, %{assigns: %{multiplayer: true}} = socket) do
-    # room_id = Room.get_room()
-    room_id = "abcdef"
-
-    {:noreply,
-     socket |> assign(:room_id, room_id) |> assign(:action, :play) |> track_multiplayer(room_id)}
-  end
+  def handle_event("play", _params, %{assigns: %{multiplayer: true}} = socket),
+    do: {:noreply, socket |> assign_room() |> track_multiplayer()}
 
   @impl true
   # Handle event for single player game
-  def handle_event("play", _params, socket) do
-    {:noreply, assign(socket, action: :play)}
-  end
+  def handle_event("play", _params, socket), do: {:noreply, assign(socket, action: :play)}
 
   @impl true
   # Originates from edit component
@@ -102,18 +93,33 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   def handle_info(
-        %{event: "presence_diff", payload: %{joins: _joins, leaves: _leaves}, topic: room_id},
+        %{event: "presence_diff", payload: _payload, topic: room_id},
         socket
       ) do
+    # TODO: handle when a player leaves
     count = Presence.list(room_id) |> map_size()
 
     if count == 2 do
+      # a "handshake" step where players send their board data to each other
+      Phoenix.PubSub.broadcast(Battleship.PubSub, room_id, %{
+        event: "handshake",
+        from: self(),
+        gameboard: socket.assigns.gameboard
+      })
+
       {:noreply, socket}
-      # {:noreply, assign(socket, action: :play)} # when we want user to be in a "waiting" room
     else
-      {:noreply, socket}
+      # send user to a "waiting room"
+      {:noreply, assign(socket, :action, :waiting)}
     end
   end
+
+  def handle_info(%{event: "handshake", from: pid, gameboard: enemy_gameboard}, socket)
+      when pid != self() do
+    {:noreply, socket |> assign(:action, :play) |> assign(:enemy_gameboard, enemy_gameboard)}
+  end
+
+  def handle_info(%{event: "handshake"} = _payload, socket), do: {:noreply, socket}
 
   defp track_player_count(socket) do
     count = Presence.list(@player_count_topic) |> map_size()
@@ -126,11 +132,35 @@ defmodule BattleshipWeb.GameLive.Index do
     assign(socket, :player_count, count)
   end
 
-  defp track_multiplayer(socket, topic) do
+  defp assign_room(socket) do
+    # room_id = Room.get_room()
+    # check for exisiting room or new room
+    dbg(self())
+
+    case temp_room_generator() do
+      {:new_room, room_id} ->
+        socket |> assign(room_id: room_id) |> assign(first_chance: true)
+
+      {:existing_room, room_id} ->
+        socket |> assign(room_id: room_id) |> assign(first_chance: false)
+    end
+  end
+
+  defp track_multiplayer(socket) do
+    topic = socket.assigns.room_id
     # What if a user doesn't disconnect, but leaves a room just after creating a room?
-    # add a check to make decision based on `Presence.list`
     BattleshipWeb.Endpoint.subscribe(topic)
     Presence.track(self(), topic, socket.id, %{room_id: topic})
     socket
+  end
+
+  # TODO: remove this function
+  defp temp_room_generator do
+    room_id = "abcdef"
+
+    case Room.get_room() do
+      {:new_room, _room_id} -> {:new_room, room_id}
+      {:existing_room, _room_id} -> {:existing_room, room_id}
+    end
   end
 end

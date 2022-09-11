@@ -6,5 +6,30 @@
 
 	<p>Multiplayer</p>
 
+	<div class="flex flex-col gap-4 justify-center md:flex-row md:gap-10">
+		<div>
+			<.live_component
+				id="player_board"
+				module={BattleshipWeb.GameLive.BoardComponent}
+				gameboard={@gameboard}
+				enable_edit={false}
+				target={@myself}
+				show_ships={true}
+			/>
+			<p class="text-center">Your board</p>
+		</div>
+		<div>
+			<.live_component
+				id="enemy_board"
+				module={BattleshipWeb.GameLive.BoardComponent}
+				gameboard={@enemy_gameboard}
+				enable_edit={@edit_enemy_board}
+				target={@myself}
+				show_ships={true}
+			/>
+			<p class="text-center">Opponent's board</p>
+		</div>
+	</div>
+
 	<.btn click="index" to={"#play-component"} class="mt-2 text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">End game</.btn>
 </div>

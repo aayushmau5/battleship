@@ -26,7 +26,7 @@ defmodule Battleship.Room do
           {{:new_room, room_id}, [room_id]}
 
         [first | list] ->
-          {{:exisiting_room, first}, list}
+          {{:existing_room, first}, list}
       end
     end)
   end

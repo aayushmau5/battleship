@@ -1,4 +1,7 @@
 defmodule BattleshipWeb.GameLive.EditComponent do
+  @moduledoc """
+  This module handles editing(ex. placing ships) of player board
+  """
   use BattleshipWeb, :live_component
 
   alias Battleship.{Gameboard, Ship}
