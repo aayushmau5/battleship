@@ -50,7 +50,7 @@ defmodule Battleship.Computer do
     case Matrix.get(player_board, position) do
       -2 -> get_attack_position(player_board)
       -1 -> get_attack_position(player_board)
-      _ -> position
+      _ -> %{"row" => Enum.at(position, 0), "col" => Enum.at(position, 1)}
     end
   end
 end

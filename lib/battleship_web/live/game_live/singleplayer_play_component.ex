@@ -30,18 +30,9 @@ defmodule BattleshipWeb.GameLive.SingleplayerPlayComponent do
 
   @impl true
   # this click event should always originate from current player clicking on enemy's board
-  def handle_event("click", %{"row" => row, "col" => col}, socket) do
+  def handle_event("click", position, socket) do
     # computer or another player will get a new chance here in this handler.
-    new_enemy_board =
-      Gameboard.attack(socket.assigns.enemy_gameboard, [
-        String.to_integer(row),
-        String.to_integer(col)
-      ])
-
-    send(
-      self(),
-      {:update_enemy_gameboard, %{enemy_gameboard: new_enemy_board}}
-    )
+    send(self(), {:attack_enemy, %{position: position}})
 
     {:noreply,
      socket
@@ -51,24 +42,21 @@ defmodule BattleshipWeb.GameLive.SingleplayerPlayComponent do
   end
 
   defp computer_chance(socket, player_board) do
-    new_player_gameboard =
-      Gameboard.attack(player_board, Computer.get_attack_position(player_board))
-
     :timer.apply_after(
       900,
       BattleshipWeb.GameLive.SingleplayerPlayComponent,
       :send_computer_update,
       [
         self(),
-        new_player_gameboard
+        Computer.get_attack_position(player_board)
       ]
     )
 
     socket
   end
 
-  def send_computer_update(pid, gameboard) do
-    send(pid, {:update_player_gameboard, %{gameboard: gameboard}})
+  def send_computer_update(pid, attack_position) do
+    send(pid, {:attack_player, %{position: attack_position}})
 
     send_update(pid, BattleshipWeb.GameLive.SingleplayerPlayComponent,
       id: "play-component",

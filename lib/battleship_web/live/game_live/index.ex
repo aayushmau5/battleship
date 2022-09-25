@@ -12,7 +12,6 @@ defmodule BattleshipWeb.GameLive.Index do
      socket
      |> assign(
        action: :index,
-       # TODO: move this gameboard generation step inside update
        gameboard: Gameboard.generate_board(),
        enemy_gameboard: %{},
        has_won: false,
@@ -55,16 +54,25 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   # Originates from edit component
-  def handle_info({:edit_player_gameboard, %{gameboard: gameboard}}, socket) do
+  def handle_info({:update_gameboard, %{gameboard: gameboard}}, socket) do
     {:noreply, assign(socket, :gameboard, gameboard)}
   end
 
   @impl true
-  # Originates from play component
-  def handle_info({:update_player_gameboard, %{gameboard: gameboard}}, socket) do
-    socket = assign(socket, :gameboard, gameboard)
+  def handle_info({:update_enemy_gameboard, %{enemy_gameboard: enemy_gameboard}}, socket) do
+    {:noreply, assign(socket, :enemy_gameboard, enemy_gameboard)}
+  end
 
-    if Gameboard.has_won?(gameboard) do
+  @impl true
+  # Originates from play component
+  def handle_info({:attack_player, %{position: position}}, socket) do
+    %{"row" => row, "col" => col} = position
+
+    new_player_gameboard = Gameboard.attack(socket.assigns.gameboard, [row, col])
+
+    socket = assign(socket, :gameboard, new_player_gameboard)
+
+    if Gameboard.has_won?(new_player_gameboard) do
       {:noreply, socket |> assign(:has_won, true) |> assign(:winner, "computer")}
     else
       {:noreply, socket}
@@ -72,11 +80,21 @@ defmodule BattleshipWeb.GameLive.Index do
   end
 
   @impl true
-  # Originates from singleplayer play component
-  def handle_info({:update_enemy_gameboard, %{enemy_gameboard: gameboard}}, socket) do
-    socket = assign(socket, :enemy_gameboard, gameboard)
+  def handle_info(
+        {:attack_enemy, %{position: position}},
+        %{assigns: %{multiplayer: false}} = socket
+      ) do
+    %{"row" => row, "col" => col} = position
 
-    if Gameboard.has_won?(gameboard) do
+    new_enemy_board =
+      Gameboard.attack(socket.assigns.enemy_gameboard, [
+        String.to_integer(row),
+        String.to_integer(col)
+      ])
+
+    socket = assign(socket, :enemy_gameboard, new_enemy_board)
+
+    if Gameboard.has_won?(new_enemy_board) do
       {:noreply, socket |> assign(:has_won, true) |> assign(:winner, "player")}
     else
       {:noreply, socket}
@@ -85,10 +103,22 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   # Originates from multiplyaer play component
-  def handle_info({:update_multiplayer_enemy_gameboard, %{enemy_gameboard: gameboard}}, socket) do
-    socket = socket |> assign(:enemy_gameboard, gameboard) |> assign(:edit_enemy_board, false)
+  def handle_info(
+        {:attack_enemy, %{position: position}},
+        %{assigns: %{multiplayer: true}} = socket
+      ) do
+    %{"row" => row, "col" => col} = position
 
-    if Gameboard.has_won?(gameboard) do
+    new_enemy_board =
+      Gameboard.attack(socket.assigns.enemy_gameboard, [
+        String.to_integer(row),
+        String.to_integer(col)
+      ])
+
+    socket =
+      socket |> assign(:enemy_gameboard, new_enemy_board) |> assign(:edit_enemy_board, false)
+
+    if Gameboard.has_won?(new_enemy_board) do
       Phoenix.PubSub.broadcast_from(Battleship.PubSub, self(), socket.assigns.room_id, %{
         event: "multiplayer:win"
       })
@@ -99,10 +129,8 @@ defmodule BattleshipWeb.GameLive.Index do
     end
   end
 
-  @doc """
-  Tracks the number of player online
-  """
   @impl true
+  # Tracks the number of player online
   def handle_info(
         %{event: "presence_diff", payload: %{joins: joins, leaves: leaves}, topic: "player"},
         %{assigns: %{player_count: count}} = socket
@@ -112,6 +140,7 @@ defmodule BattleshipWeb.GameLive.Index do
   end
 
   @impl true
+  # Tracks the number of players in a particular room
   def handle_info(
         %{event: "presence_diff", payload: _payload, topic: room_id},
         socket
