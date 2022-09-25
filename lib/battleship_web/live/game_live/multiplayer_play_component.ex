@@ -7,6 +7,11 @@ defmodule BattleshipWeb.GameLive.MultiplayerPlayComponent do
   alias Battleship.Gameboard
 
   @impl true
+  def mount(socket) do
+    {:ok, socket |> assign(:has_won, false)}
+  end
+
+  @impl true
   def handle_event("click", position, socket) do
     %{"row" => row, "col" => col} = position
 
@@ -18,7 +23,7 @@ defmodule BattleshipWeb.GameLive.MultiplayerPlayComponent do
 
     send(
       self(),
-      {:update_enemy_gameboard, %{enemy_gameboard: new_enemy_board}}
+      {:update_multiplayer_enemy_gameboard, %{enemy_gameboard: new_enemy_board}}
     )
 
     Phoenix.PubSub.broadcast_from(Battleship.PubSub, self(), socket.assigns.room_id, %{
@@ -26,6 +31,6 @@ defmodule BattleshipWeb.GameLive.MultiplayerPlayComponent do
       position: position
     })
 
-    {:noreply, socket |> assign(:edit_enemy_board, false)}
+    {:noreply, socket}
   end
 end

@@ -5,6 +5,9 @@
 	<p class="text-sm text-center">You either hit or miss. Similarly, computer can attack you. One who first hits all the ships of the opposite player wins.</p>
 
 	<p>Multiplayer</p>
+	<%= if @has_won do %>
+		<p>Game won!</p>
+	<% end %>
 
 	<div class="flex flex-col gap-4 justify-center md:flex-row md:gap-10">
 		<div>
