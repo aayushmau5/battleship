@@ -14,7 +14,8 @@ defmodule BattleshipWeb.GameLive.Index do
        action: :index,
        gameboard: Gameboard.generate_board(),
        enemy_gameboard: %{},
-       has_won: false,
+       game_over: false,
+       win: false,
        winner: nil,
        multiplayer: false
      )
@@ -23,13 +24,18 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   def handle_event("index", _params, socket) do
+    if socket.assigns.multiplayer do
+      Presence.untrack(self(), socket.assigns.room_id, socket.id)
+    end
+
     # Reset player state
     {:noreply,
      assign(socket,
        action: :index,
        gameboard: Gameboard.generate_board(),
        enemy_gameboard: %{},
-       has_won: false,
+       game_over: false,
+       win: false,
        winner: nil,
        multiplayer: false
      )}
@@ -37,7 +43,7 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   def handle_event("edit", _params, socket),
-    do: {:noreply, assign(socket, multiplayer: false, action: :edit)}
+    do: {:noreply, assign(socket, action: :edit)}
 
   @impl true
   def handle_event("multiplayer", _params, socket),
@@ -73,7 +79,7 @@ defmodule BattleshipWeb.GameLive.Index do
     socket = assign(socket, :gameboard, new_player_gameboard)
 
     if Gameboard.has_won?(new_player_gameboard) do
-      {:noreply, socket |> assign(:has_won, true) |> assign(:winner, "computer")}
+      {:noreply, socket |> assign(:game_over, true) |> assign(:winner, "computer")}
     else
       {:noreply, socket}
     end
@@ -95,7 +101,7 @@ defmodule BattleshipWeb.GameLive.Index do
     socket = assign(socket, :enemy_gameboard, new_enemy_board)
 
     if Gameboard.has_won?(new_enemy_board) do
-      {:noreply, socket |> assign(:has_won, true) |> assign(:winner, "player")}
+      {:noreply, socket |> assign(:game_over, true) |> assign(:winner, "player")}
     else
       {:noreply, socket}
     end
@@ -123,7 +129,7 @@ defmodule BattleshipWeb.GameLive.Index do
         event: "multiplayer:win"
       })
 
-      {:noreply, socket |> assign(:has_won, true)}
+      {:noreply, socket |> assign(:game_over, true) |> assign(:win, true)}
     else
       {:noreply, socket}
     end
@@ -168,7 +174,8 @@ defmodule BattleshipWeb.GameLive.Index do
   end
 
   def handle_info(%{event: "multiplayer:win"}, socket) do
-    {:noreply, socket |> assign(:edit_enemy_board, false) |> assign(:lost, true)}
+    {:noreply,
+     socket |> assign(:edit_enemy_board, false) |> assign(:game_over, true) |> assign(:win, false)}
   end
 
   def handle_info(

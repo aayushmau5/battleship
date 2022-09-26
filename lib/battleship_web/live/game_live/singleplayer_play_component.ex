@@ -4,7 +4,7 @@ defmodule BattleshipWeb.GameLive.SingleplayerPlayComponent do
   """
   use BattleshipWeb, :live_component
 
-  alias Battleship.{Gameboard, Computer}
+  alias Battleship.{Computer}
 
   @impl true
   def mount(socket) do
@@ -21,7 +21,7 @@ defmodule BattleshipWeb.GameLive.SingleplayerPlayComponent do
   def update(assigns, socket) do
     socket = assign(socket, assigns)
 
-    if socket.assigns.has_won do
+    if socket.assigns.game_over do
       {:ok, socket |> assign(:edit_enemy_board, false)}
     else
       {:ok, socket}

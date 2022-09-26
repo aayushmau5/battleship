@@ -4,7 +4,7 @@
 	<p class="text-sm text-center">Computer's ship placement won't be visible to you. You try to guess in which position your oppnent's ship is, and attack.</p>
 	<p class="text-sm text-center">You either hit or miss. Similarly, computer can attack you. One who first hits all the ships of the opposite player wins.</p>
 
-  <%= if @has_won do %>
+  <%= if @game_over do %>
    <p class="font-bold text-teal-400 my-3 text-xl"><%= String.capitalize(@winner) %> won the game!</p>
 	<% else %>
 	 <p class="my-3">Chance: <span class="font-bold"><%= String.capitalize(@play_chance) %></span></p>
