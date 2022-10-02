@@ -210,21 +210,30 @@ defmodule BattleshipWeb.GameLive.Index do
 
   defp assign_room(socket) do
     case Room.get_room() do
-      {:new_room, _room_id} ->
+      {:new_room, room_id} ->
         # `edit_enemy_board: true` -> Give first chance to the player who joined a newly created room
-        socket |> assign(:room_id, "abcdef") |> assign(:edit_enemy_board, true)
+        socket |> assign(:room_id, room_id) |> assign(:edit_enemy_board, true)
 
-      {:existing_room, _room_id} ->
-        # `edit_enemy_board: false` -> Give second chance to the player who joined an existing room
-        socket |> assign(:room_id, "abcdef") |> assign(:edit_enemy_board, false)
+      {:existing_room, room_id} ->
+        if player_present?(room_id) do
+          # `edit_enemy_board: false` -> Give second chance to the player who joined an existing room
+          socket |> assign(:room_id, room_id) |> assign(:edit_enemy_board, false)
+        else
+          assign_room(socket)
+        end
     end
   end
 
   defp track_multiplayer(socket) do
     topic = socket.assigns.room_id
-    # What if a user doesn't disconnect, but leaves a room just after creating a room?
     BattleshipWeb.Endpoint.subscribe(topic)
     Presence.track(self(), topic, socket.id, %{room_id: topic})
     socket
+  end
+
+  defp player_present?(room_id) do
+    # Checks if a room has players or not
+    player_count = Presence.list(room_id) |> map_size()
+    player_count > 0
   end
 end
