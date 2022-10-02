@@ -17,7 +17,8 @@ defmodule BattleshipWeb.GameLive.Index do
        game_over: false,
        win: false,
        winner: nil,
-       multiplayer: false
+       multiplayer: false,
+       player_left: false
      )
      |> track_player_count()}
   end
@@ -25,6 +26,7 @@ defmodule BattleshipWeb.GameLive.Index do
   @impl true
   def handle_event("index", _params, socket) do
     if socket.assigns.multiplayer do
+      BattleshipWeb.Endpoint.unsubscribe(socket.assigns.room_id)
       Presence.untrack(self(), socket.assigns.room_id, socket.id)
     end
 
@@ -37,7 +39,8 @@ defmodule BattleshipWeb.GameLive.Index do
        game_over: false,
        win: false,
        winner: nil,
-       multiplayer: false
+       multiplayer: false,
+       player_left: false
      )}
   end
 
@@ -148,10 +151,9 @@ defmodule BattleshipWeb.GameLive.Index do
   @impl true
   # Tracks the number of players in a particular room
   def handle_info(
-        %{event: "presence_diff", payload: _payload, topic: room_id},
+        %{event: "presence_diff", payload: %{joins: _joins, leaves: leaves}, topic: room_id},
         socket
       ) do
-    # TODO: handle when a player leaves
     count = Presence.list(room_id) |> map_size()
 
     if count == 2 do
@@ -164,8 +166,15 @@ defmodule BattleshipWeb.GameLive.Index do
 
       {:noreply, socket}
     else
-      # send user to a "waiting room"
-      {:noreply, assign(socket, :action, :waiting)}
+      left = map_size(leaves)
+
+      if left != 0 do
+        # A player left the game
+        {:noreply, assign(socket, player_left: true, edit_enemy_board: false)}
+      else
+        # send user to a "waiting room"
+        {:noreply, assign(socket, action: :waiting)}
+      end
     end
   end
 
@@ -200,14 +209,14 @@ defmodule BattleshipWeb.GameLive.Index do
   end
 
   defp assign_room(socket) do
-    # room_id = Room.get_room()
-    # check for exisiting room or new room
-    case temp_room_generator() do
-      {:new_room, room_id} ->
-        socket |> assign(:room_id, room_id) |> assign(:edit_enemy_board, true)
+    case Room.get_room() do
+      {:new_room, _room_id} ->
+        # `edit_enemy_board: true` -> Give first chance to the player who joined a newly created room
+        socket |> assign(:room_id, "abcdef") |> assign(:edit_enemy_board, true)
 
-      {:existing_room, room_id} ->
-        socket |> assign(:room_id, room_id) |> assign(:edit_enemy_board, false)
+      {:existing_room, _room_id} ->
+        # `edit_enemy_board: false` -> Give second chance to the player who joined an existing room
+        socket |> assign(:room_id, "abcdef") |> assign(:edit_enemy_board, false)
     end
   end
 
@@ -217,15 +226,5 @@ defmodule BattleshipWeb.GameLive.Index do
     BattleshipWeb.Endpoint.subscribe(topic)
     Presence.track(self(), topic, socket.id, %{room_id: topic})
     socket
-  end
-
-  # TODO: remove this function
-  defp temp_room_generator do
-    room_id = "abcdef"
-
-    case Room.get_room() do
-      {:new_room, _room_id} -> {:new_room, room_id}
-      {:existing_room, _room_id} -> {:existing_room, room_id}
-    end
   end
 end

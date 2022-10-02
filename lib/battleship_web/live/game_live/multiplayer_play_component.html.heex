@@ -13,7 +13,11 @@
 			<p>You lost the game!</p>
 		<% end %>
 	<% else %>
-		<p>Chance</p>
+		<p>Chance: <%= if @edit_enemy_board, do: "Your chance", else: "Opponent's chance" %></p>
+	<% end %>
+
+	<%= if @player_left do %>
+		<p>Opponent left the game</p>
 	<% end %>
 
 	<div class="flex flex-col gap-4 justify-center md:flex-row md:gap-10">

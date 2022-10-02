@@ -17,7 +17,6 @@ defmodule Battleship.Room do
   @doc """
   Gets a room id from the list.
   """
-  # TODO: need to think about this way of generating rooms
   def get_room() do
     Agent.get_and_update(:rooms_state, fn list ->
       case list do
