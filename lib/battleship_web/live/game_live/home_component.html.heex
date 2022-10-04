@@ -1,11 +1,12 @@
 <div class="animate-fade-in" id="home-component">
-	<p class="text-right">Players online: <%= @player_count %></p>
+	<p class="text-right mb-4">Players online: <%= @player_count %></p>
 	<div class="text-center">
 		<h1 class="text-2xl mb-2 font-bold">Welcome!</h1>
 		<p class="mb-4">Play the game of battleship where you have to sink your enemy's ships faster than they sink yours.</p>
-		<div class="flex gap-4 justify-center flex-wrap">
+		<div class="flex gap-4 justify-center flex-wrap mb-3">
 			<.btn click="edit" to="#home-component" class="text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">Play against computer</.btn>
 			<.btn click="multiplayer" to="#home-component" class="text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">Play against another player</.btn>
 		</div>
+		<.btn click="howto" to="#home-component" class="text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">How to play?</.btn>
 	</div>
 </div>

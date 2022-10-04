@@ -45,6 +45,10 @@ defmodule BattleshipWeb.GameLive.Index do
   end
 
   @impl true
+  def handle_event("howto", _params, socket),
+    do: {:noreply, assign(socket, action: :howto)}
+
+  @impl true
   def handle_event("edit", _params, socket),
     do: {:noreply, assign(socket, action: :edit)}
 

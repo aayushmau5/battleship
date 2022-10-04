@@ -1,10 +1,12 @@
-<h1 class="text-center font-bold text-5xl text-teal-400">Battleship</h1>
+<h1 class="text-center font-extrabold text-5xl md:text-6xl lg:text-7xl text-teal-400">Battleship!</h1>
 
-<div class="p-4 mt-10">
+<div class="p-4 mt-10 lg:w-1/2 mx-auto">
 	<%= case {@action, @multiplayer}  do %>
 		<% {:index, _} -> %> <.live_component id="home-component" module={BattleshipWeb.GameLive.HomeComponent} player_count={@player_count} />
 
 		<% {:edit, _} -> %> <.live_component id="edit-component" module={BattleshipWeb.GameLive.EditComponent} gameboard={@gameboard} multiplayer={@multiplayer} />
+
+		<% {:howto, _} -> %> <.live_component id="howto-component" module={BattleshipWeb.GameLive.HowToComponent} />
 
 		<% {:waiting, true} -> %> <.live_component id="waiting-component" module={BattleshipWeb.GameLive.WaitingRoomComponent} />
 
