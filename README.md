@@ -1,40 +1,33 @@
 # Battleship
 
-To start your Phoenix server:
+Battleship game made using Elixir & Phoenix framework ❤️
 
-- Install dependencies with `mix deps.get`
-- Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+You can:
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+- Play against computer
+- Play against another player in real-time
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+## Deployment
 
-## Learn more
+Deployed on [fly.io](https://fly.io) 💪
 
-- Official website: https://www.phoenixframework.org/
-- Guides: https://hexdocs.pm/phoenix/overview.html
-- Docs: https://hexdocs.pm/phoenix
-- Forum: https://elixirforum.com/c/phoenix-forum
-- Source: https://github.com/phoenixframework/phoenix
+Live at https://aayush-battleship.fly.dev/ 😎
 
-## Flow
+## Setup
 
-- A front page:
-  - showing all the users who are playing the game
-  - an input box for name input
-- After entering their name, user press play. They are taken to a page where they enter their preferred ship position.
-- After successful entry, they are matched against another play available(if not available, give an option to play against a computer). The opposite players are matched automatically.
-- After successful match, the user is redirected to a play page where they against another player(handle cases: what if a player leaves a game in middle).
+Checkout the setup guide for Phoenix: https://hexdocs.pm/phoenix/installation.html
 
-## Approach(logical)
+## Internals
 
-- 10 x 10 matrix(all zero)
+### Approach(logical)
+
+- Start with a 10 x 10 matrix(all 0)
 - 4 types of ships based on their length(all different)
 - When user places a ship of certain length, we set the length in the given matrix at the desired position
 - If a ship is hit, we set -1 at that position, if it is a miss, we assign -2 at that position
-- Check the matrix for any natural number, if there is none, user has won the game
+- Check the matrix for any natural number(> 0), if there is none, user has won the game
 
-## Approach(application) (Not final)
+## TODO
 
-- When a user plays a game against another player, they will generate a "room id", which is will be stored in an :ets table(or mnesia). When another player also plays a game, our application will look up on the table to see any free room. On a free room, user will join that room. At this point, we will remove that room id from the table.
-- On enemy board click, send the row and col id to another processes liveview, and attack at the position. Need to handle styles for hit, and miss.
+- Add flow diagram in README
+- Ability to invite other player(through a room)
