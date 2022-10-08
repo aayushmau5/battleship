@@ -1,17 +1,17 @@
 <div class="flex flex-col items-center animate-fade-in" id="edit-component">
-	<h1 class="text-2xl font-bold">Place you ships!</h1>
-	<p class="text-sm text-center mt-4">Place your ships on the board below. When you are done placing ships, click play.</p>
+	<h1 class="text-2xl font-bold">Place your ships!</h1>
+	<p class="text-sm text-center mt-4">Place your ships on the board below.</p>
 
 	<%= if @edit do %>
 		<p class="mt-4">Current ship length: <span class="text-teal-400 font-bold"><%= @ship %></span></p>
+	<% else %>
+		<p class="mt-4">You are ready to play the game.</p>
 	<% end %>
 
-	<p class="my-3">Axis: <span class="text-teal-400 font-bold"><%= String.capitalize(@axis) %></span></p>
-	<button phx-target={@myself} phx-click="change-axis" class="text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">Change axis</button>
-
-	<%= if @error do %>
-		<p class="mt-3 text-red-400"><%= @error %></p>
-	<% end %>
+	<p class="my-3">
+		Axis: <span class="text-teal-400 font-bold"><%= String.capitalize(@axis) %></span>
+		<button phx-target={@myself} phx-click="change-axis" class="font-bold">Change</button>
+	</p>
 
 	<.live_component
 		id="edit-board"
@@ -21,6 +21,10 @@
 		target={@myself}
 		show_ships={true}
 	/>
+
+	<%= if @error do %>
+		<p class="mb-3 text-red-400"><%= @error %></p>
+	<% end %>
 
 	<div class="flex gap-4">
 		<.btn

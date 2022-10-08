@@ -53,6 +53,6 @@ defmodule BattleshipWeb.GameLive.BoardComponent do
   defp assign_hit_class, do: "bg-red-400"
   defp assign_miss_class, do: "bg-slate-100"
 
-  defp assign_hover_class(true), do: "cursor-pointer hover:bg-slate-100"
+  defp assign_hover_class(true), do: "cursor-pointer hover:bg-slate-200"
   defp assign_hover_class(false), do: ""
 end

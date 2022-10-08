@@ -66,6 +66,13 @@ defmodule BattleshipWeb.GameLive.Index do
   def handle_event("play", _params, socket), do: {:noreply, assign(socket, action: :play)}
 
   @impl true
+  def handle_event("multiplayer-to-singleplayer", _params, socket) do
+    BattleshipWeb.Endpoint.unsubscribe(socket.assigns.room_id)
+    Presence.untrack(self(), socket.assigns.room_id, socket.id)
+    {:noreply, assign(socket, action: :play, multiplayer: false)}
+  end
+
+  @impl true
   # Originates from edit component
   def handle_info({:update_gameboard, %{gameboard: gameboard}}, socket) do
     {:noreply, assign(socket, :gameboard, gameboard)}

@@ -1,10 +1,8 @@
 <div class="flex flex-col items-center flex-wrap animate-fade-in" id="play-component">
 	<h1 class="text-2xl font-bold">Play game!</h1>
-	<p class="text-sm text-center mt-4">You are playing against computer.</p>
-	<p class="text-sm text-center">Computer's ship placement won't be visible to you. You try to guess in which position your oppnent's ship is, and attack.</p>
-	<p class="text-sm text-center">You either hit or miss. Similarly, computer can attack you. One who first hits all the ships of the opposite player wins.</p>
-
-	<p>Multiplayer</p>
+	<p class="text-sm text-center mt-4">You are playing against another player.</p>
+	<p class="text-sm text-center">Their ship placement won't be visible to you. You try to guess in which position your oppnent's ship is, and attack.</p>
+	<p class="text-sm text-center">You either hit or miss. Similarly, your opponent can attack you. One who first sinks all the ships of the opposite player wins.</p>
 
 	<%= if @game_over do %>
 		<%= if @win do %>
@@ -13,14 +11,14 @@
 			<p>You lost the game!</p>
 		<% end %>
 	<% else %>
-		<p>Chance: <%= if @edit_enemy_board, do: "Your chance", else: "Opponent's chance" %></p>
+		<p>Chance: <span class="font-bold"><%= if @edit_enemy_board, do: "Your chance", else: "Opponent's chance" %></span></p>
 	<% end %>
 
 	<%= if @player_left do %>
-		<p>Opponent left the game</p>
+		<p class="font-bold text-red-400">Opponent left the game</p>
 	<% end %>
 
-	<div class="flex flex-col gap-4 justify-center md:flex-row md:gap-10">
+	<div class="flex flex-col gap-4 justify-center md:flex-row md:gap-10 mb-4">
 		<div>
 			<.live_component
 				id="player_board"
@@ -45,5 +43,5 @@
 		</div>
 	</div>
 
-	<.btn click="index" to={"#play-component"} class="mt-2 text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">End game</.btn>
+	<.btn click="index" to={"#play-component"} class="text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">End game</.btn>
 </div>

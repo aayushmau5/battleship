@@ -14,8 +14,8 @@ defmodule BattleshipWeb.GameLive.HowToComponent do
       </ol>
       <p class="font-bold my-4">Ready?</p>
       <div class="flex gap-4 justify-center flex-wrap">
-        <.btn click="edit" to="#home-component" class="text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">Play against computer</.btn>
-        <.btn click="multiplayer" to="#home-component" class="text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">Play against another player</.btn>
+        <.btn click="edit" to="#edit-component" class="text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">Play against computer</.btn>
+        <.btn click="multiplayer" to="#edit-component" class="text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">Play against another player</.btn>
       </div>
     </div>
     """
