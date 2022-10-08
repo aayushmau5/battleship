@@ -25,7 +25,7 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   def handle_event("index", _params, socket) do
-    if socket.assigns.multiplayer do
+    if socket.assigns.multiplayer && socket.assigns.room_id do
       BattleshipWeb.Endpoint.unsubscribe(socket.assigns.room_id)
       Presence.untrack(self(), socket.assigns.room_id, socket.id)
     end
@@ -54,7 +54,7 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   def handle_event("multiplayer", _params, socket),
-    do: {:noreply, assign(socket, multiplayer: true, action: :edit)}
+    do: {:noreply, assign(socket, multiplayer: true, action: :edit, room_id: nil)}
 
   @impl true
   # Handle event for multi-player game
