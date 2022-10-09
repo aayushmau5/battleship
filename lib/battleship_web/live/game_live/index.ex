@@ -1,7 +1,7 @@
 defmodule BattleshipWeb.GameLive.Index do
   use BattleshipWeb, :live_view
 
-  alias Battleship.{Gameboard, Room}
+  alias Battleship.{Gameboard, Room, Player, Computer}
   alias BattleshipWeb.Presence
 
   @player_count_topic "player"
@@ -12,12 +12,10 @@ defmodule BattleshipWeb.GameLive.Index do
      socket
      |> assign(
        action: :index,
-       gameboard: Gameboard.generate_board(),
-       enemy_gameboard: %{},
-       game_over: false,
-       win: false,
-       winner: nil,
        multiplayer: false,
+       player: Player.new(),
+       opponent: %Player{},
+       game_over: false,
        player_left: false
      )
      |> track_player_count()}
@@ -25,6 +23,7 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   def handle_event("index", _params, socket) do
+    # TODO: fix this check
     if socket.assigns.multiplayer && socket.assigns.room_id do
       BattleshipWeb.Endpoint.unsubscribe(socket.assigns.room_id)
       Presence.untrack(self(), socket.assigns.room_id, socket.id)
@@ -34,12 +33,10 @@ defmodule BattleshipWeb.GameLive.Index do
     {:noreply,
      assign(socket,
        action: :index,
-       gameboard: Gameboard.generate_board(),
-       enemy_gameboard: %{},
-       game_over: false,
-       win: false,
-       winner: nil,
        multiplayer: false,
+       player: Player.new(),
+       opponent: %Player{},
+       game_over: false,
        player_left: false
      )}
   end
@@ -49,12 +46,12 @@ defmodule BattleshipWeb.GameLive.Index do
     do: {:noreply, assign(socket, action: :howto)}
 
   @impl true
-  def handle_event("edit", _params, socket),
+  def handle_event("singleplayer", _params, socket),
     do: {:noreply, assign(socket, action: :edit)}
 
   @impl true
   def handle_event("multiplayer", _params, socket),
-    do: {:noreply, assign(socket, multiplayer: true, action: :edit, room_id: nil)}
+    do: {:noreply, assign(socket, multiplayer: true, action: :edit)}
 
   @impl true
   # Handle event for multi-player game
@@ -74,26 +71,30 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   # Originates from edit component
-  def handle_info({:update_gameboard, %{gameboard: gameboard}}, socket) do
-    {:noreply, assign(socket, :gameboard, gameboard)}
+  def handle_info({:update_player_gameboard, %{gameboard: gameboard}}, socket) do
+    player = Player.update_player_gameboard(socket.assigns.player, gameboard)
+    {:noreply, assign(socket, player: player)}
   end
 
   @impl true
-  def handle_info({:update_enemy_gameboard, %{enemy_gameboard: enemy_gameboard}}, socket) do
-    {:noreply, assign(socket, :enemy_gameboard, enemy_gameboard)}
+  def handle_info(:set_computer_opponent, socket) do
+    opponent = Player.new("Computer", Computer.generate_computer_gameboard())
+    {:noreply, assign(socket, opponent: opponent)}
   end
 
   @impl true
-  # Originates from play component
+  # Originates from play component when a computer attacks player
   def handle_info({:attack_player, %{position: position}}, socket) do
     %{"row" => row, "col" => col} = position
 
-    new_player_gameboard = Gameboard.attack(socket.assigns.gameboard, [row, col])
+    new_player_gameboard = Gameboard.attack(socket.assigns.player.gameboard, [row, col])
+    player = Player.update_player_gameboard(socket.assigns.player, new_player_gameboard)
 
-    socket = assign(socket, :gameboard, new_player_gameboard)
+    socket = assign(socket, player: player)
 
     if Gameboard.has_won?(new_player_gameboard) do
-      {:noreply, socket |> assign(:game_over, true) |> assign(:winner, "computer")}
+      opponent = Player.set_win(socket.assigns.opponent, true)
+      {:noreply, socket |> assign(:game_over, true) |> assign(:opponent, opponent)}
     else
       {:noreply, socket}
     end
@@ -101,21 +102,24 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   def handle_info(
-        {:attack_enemy, %{position: position}},
+        {:attack_opponent, %{position: position}},
         %{assigns: %{multiplayer: false}} = socket
       ) do
     %{"row" => row, "col" => col} = position
 
-    new_enemy_board =
-      Gameboard.attack(socket.assigns.enemy_gameboard, [
+    new_opponent_board =
+      Gameboard.attack(socket.assigns.opponent.gameboard, [
         String.to_integer(row),
         String.to_integer(col)
       ])
 
-    socket = assign(socket, :enemy_gameboard, new_enemy_board)
+    opponent = Player.update_player_gameboard(socket.assigns.opponent, new_opponent_board)
 
-    if Gameboard.has_won?(new_enemy_board) do
-      {:noreply, socket |> assign(:game_over, true) |> assign(:winner, "player")}
+    socket = assign(socket, :opponent, opponent)
+
+    if Gameboard.has_won?(new_opponent_board) do
+      player = Player.set_win(socket.assigns.player, true)
+      {:noreply, socket |> assign(:game_over, true) |> assign(:player, player)}
     else
       {:noreply, socket}
     end
