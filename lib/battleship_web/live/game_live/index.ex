@@ -34,7 +34,7 @@ defmodule BattleshipWeb.GameLive.Index do
      assign(socket,
        action: :index,
        multiplayer: false,
-       player: Player.new(),
+       player: Player.reset_state(socket.assigns.player),
        opponent: %Player{},
        game_over: false,
        player_left: false
@@ -78,7 +78,10 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @impl true
   def handle_info(:set_computer_opponent, socket) do
-    opponent = Player.new("Computer", Computer.generate_computer_gameboard())
+    opponent =
+      Player.new("Computer")
+      |> Player.update_player_gameboard(Computer.generate_computer_gameboard())
+
     {:noreply, assign(socket, opponent: opponent)}
   end
 

@@ -6,12 +6,15 @@ defmodule Battleship.Player do
 
   alias Battleship.{Player, Gameboard}
 
-  def new(name \\ "Player", gameboard \\ Gameboard.generate_board()) do
-    %Player{name: name, gameboard: gameboard}
+  def new(name \\ "Player") do
+    %Player{name: name}
   end
 
-  def reset_player_gameboard(player) do
-    Map.update!(player, :gameboard, fn _ -> Gameboard.generate_board() end)
+  def reset_state(player) do
+    player
+    |> Map.update!(:gameboard, fn _ -> Gameboard.generate_board() end)
+    |> Map.update!(:win, fn _ -> false end)
+    |> Map.update!(:room_id, fn _ -> nil end)
   end
 
   @doc """
