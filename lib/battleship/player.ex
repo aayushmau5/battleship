@@ -24,6 +24,10 @@ defmodule Battleship.Player do
     Map.update!(player, :gameboard, fn _ -> gameboard end)
   end
 
+  def update_room_id(player, room_id) do
+    Map.update!(player, :room_id, fn _ -> room_id end)
+  end
+
   def set_win(player, win) do
     Map.update!(player, :win, fn _ -> win end)
   end

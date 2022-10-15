@@ -6,9 +6,9 @@ defmodule BattleshipWeb.GameLive.MultiplayerPlayComponent do
 
   @impl true
   def handle_event("click", position, socket) do
-    send(self(), {:attack_enemy, %{position: position}})
+    send(self(), {:attack_opponent, %{position: position}})
 
-    Phoenix.PubSub.broadcast_from(Battleship.PubSub, self(), socket.assigns.room_id, %{
+    Phoenix.PubSub.broadcast_from(Battleship.PubSub, self(), socket.assigns.player.room_id, %{
       event: "attack_player",
       position: position
     })
