@@ -8,13 +8,17 @@ defmodule BattleshipWeb.GameLive.EditComponent do
 
   @impl true
   def mount(socket) do
-    {:ok,
-     socket
-     |> assign(:ship, Ship.get_ship(5))
-     |> assign(:axis, "x")
-     |> assign(:edit, true)
-     |> assign(:error, nil)
-     |> assign(:access_next_page, false)}
+    {
+      :ok,
+      assign(socket,
+        ship: Ship.get_ship(5),
+        axis: "x",
+        edit: true,
+        error: nil,
+        access_next_page: false,
+        gameboard: Gameboard.generate_board()
+      )
+    }
   end
 
   @impl true
@@ -37,19 +41,18 @@ defmodule BattleshipWeb.GameLive.EditComponent do
          ) do
       {:ok, new_gameboard} ->
         {:noreply,
-         socket |> assign(:gameboard, new_gameboard) |> assign(:error, nil) |> change_ship(ship)}
+         socket
+         |> assign(:gameboard, new_gameboard)
+         |> assign(:error, nil)
+         |> change_ship(ship)}
 
       {:error, :out_of_range} ->
-        {:noreply,
-         socket
-         |> assign(:error, "Out of range. Please select another slot.")}
+        {:noreply, assign(socket, error: "Out of range. Please select another slot.")}
 
       {:error, :element_already_present} ->
         {:noreply,
-         socket
-         |> assign(
-           :error,
-           "A ship is already present in that slot range. Please select another slot."
+         assign(socket,
+           error: "A ship is already present in that slot range. Please select another slot."
          )}
     end
   end
@@ -58,7 +61,7 @@ defmodule BattleshipWeb.GameLive.EditComponent do
     do: assign(socket, :ship, Ship.get_ship(current_ship - 1))
 
   defp change_ship(socket, current_ship) when current_ship <= 2 do
-    send(self(), {:update_gameboard, %{gameboard: socket.assigns.gameboard}})
+    send(self(), {:update_player_gameboard, %{gameboard: socket.assigns.gameboard}})
     socket |> assign(:edit, false) |> assign(:access_next_page, true)
   end
 

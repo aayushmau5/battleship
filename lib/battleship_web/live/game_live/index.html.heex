@@ -4,33 +4,14 @@
 	<%= case {@action, @multiplayer}  do %>
 		<% {:index, _} -> %> <.live_component id="home-component" module={BattleshipWeb.GameLive.HomeComponent} player_count={@player_count} />
 
-		<% {:edit, _} -> %> <.live_component id="edit-component" module={BattleshipWeb.GameLive.EditComponent} gameboard={@gameboard} multiplayer={@multiplayer} />
+		<% {:edit, _} -> %> <.live_component id="edit-component" module={BattleshipWeb.GameLive.EditComponent} multiplayer={@multiplayer} />
 
 		<% {:howto, _} -> %> <.live_component id="howto-component" module={BattleshipWeb.GameLive.HowToComponent} />
 
 		<% {:waiting, true} -> %> <.live_component id="waiting-component" module={BattleshipWeb.GameLive.WaitingRoomComponent} />
 
-		<% {:play, false} -> %>
-			<.live_component
-				id="play-component"
-				module={BattleshipWeb.GameLive.SingleplayerPlayComponent}
-				gameboard={@gameboard}
-				enemy_gameboard={@enemy_gameboard}
-				game_over={@game_over}
-				winner={@winner}
-			/>
+		<% {:play, false} -> %> <.live_component id="play-component" module={BattleshipWeb.GameLive.SingleplayerPlayComponent} player={@player} opponent={@opponent} game_over={@game_over} />
 
-		<% {:play, true} -> %>
-			<.live_component
-				id="play-component"
-				module={BattleshipWeb.GameLive.MultiplayerPlayComponent}
-				gameboard={@gameboard}
-				enemy_gameboard={@enemy_gameboard}
-				edit_enemy_board={@edit_enemy_board}
-				room_id={@room_id}
-				game_over={@game_over}
-				win={@win}
-				player_left={@player_left}
-			/>
+		<% {:play, true} -> %> <.live_component id="play-component" module={BattleshipWeb.GameLive.MultiplayerPlayComponent} player={@player} opponent={@opponent} enable_attack={@enable_attack} game_over={@game_over} player_left={@player_left} />
 	<% end %>
 </div>
