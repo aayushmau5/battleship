@@ -39,5 +39,12 @@ defmodule Battleship.Room do
     end)
   end
 
-  defp generate_room_id, do: UUID.uuid4(:hex)
+  def generate_room_id, do: UUID.uuid4(:hex)
+
+  def valid_room_id?(room_id) do
+    case UUID.info(room_id) do
+      {:ok, _} -> true
+      {:error, _message} -> false
+    end
+  end
 end
