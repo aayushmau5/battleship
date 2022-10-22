@@ -158,9 +158,10 @@ defmodule BattleshipWeb.GameLive.Index do
         String.to_integer(col)
       ])
 
+    player = Player.update_player_chance(socket.assigns.player, false)
     opponent = Player.update_player_gameboard(socket.assigns.opponent, new_opponent_board)
 
-    socket = assign(socket, opponent: opponent, enable_attack: false)
+    socket = assign(socket, player: player, opponent: opponent)
 
     if Gameboard.has_won?(new_opponent_board) do
       player = Player.set_win(socket.assigns.player, true)
@@ -192,10 +193,14 @@ defmodule BattleshipWeb.GameLive.Index do
   @impl true
   # Tracks the number of players in a particular room
   def handle_info(
-        %{event: "presence_diff", payload: %{leaves: leaves}, topic: room_id},
+        %{
+          event: "presence_diff",
+          payload: %{leaves: leaves},
+          topic: room_id
+        },
         socket
       ) do
-    count = Presence.list(room_id) |> map_size() |> dbg()
+    count = Presence.list(room_id) |> map_size()
 
     if count == 2 do
       # a "handshake" step where players send their data to each other
@@ -210,11 +215,13 @@ defmodule BattleshipWeb.GameLive.Index do
       left = map_size(leaves)
 
       if left != 0 do
+        player = Player.update_player_chance(socket.assigns.player, false)
         # A player left the game
-        {:noreply, assign(socket, game_over: true, player_left: true, enable_attack: false)}
+        {:noreply, assign(socket, game_over: true, player_left: true, player: player)}
       else
+        player = Player.update_player_chance(socket.assigns.player, true)
         # send user to a "waiting room"
-        {:noreply, assign(socket, action: :waiting)}
+        {:noreply, assign(socket, action: :waiting, player: player)}
       end
     end
   end
@@ -224,7 +231,8 @@ defmodule BattleshipWeb.GameLive.Index do
   end
 
   def handle_info(%{event: "multiplayer:win"}, socket) do
-    {:noreply, socket |> assign(:enable_attack, false) |> assign(:game_over, true)}
+    player = Player.update_player_chance(socket.assigns.player, false)
+    {:noreply, socket |> assign(:player, player) |> assign(:game_over, true)}
   end
 
   def handle_info(
@@ -237,9 +245,12 @@ defmodule BattleshipWeb.GameLive.Index do
         String.to_integer(col)
       ])
 
-    player = Player.update_player_gameboard(socket.assigns.player, new_player_board)
+    player =
+      socket.assigns.player
+      |> Player.update_player_gameboard(new_player_board)
+      |> Player.update_player_chance(true)
 
-    {:noreply, socket |> assign(:player, player) |> assign(:enable_attack, true)}
+    {:noreply, socket |> assign(:player, player)}
   end
 
   defp assign_room(socket) do
@@ -247,15 +258,13 @@ defmodule BattleshipWeb.GameLive.Index do
       {:new_room, room_id} ->
         player = Player.update_room_id(socket.assigns.player, room_id)
 
-        # `enable_attack: true` -> Give first chance to the player who joined a newly created room
-        socket |> assign(:player, player) |> assign(:enable_attack, true)
+        socket |> assign(:player, player)
 
       {:existing_room, room_id} ->
         if player_present?(room_id) do
           player = Player.update_room_id(socket.assigns.player, room_id)
 
-          # `edit_opponent_board: false` -> Give second chance to the player who joined an existing room
-          socket |> assign(:player, player) |> assign(:enable_attack, false)
+          socket |> assign(:player, player)
         else
           # Get another room
           assign_room(socket)

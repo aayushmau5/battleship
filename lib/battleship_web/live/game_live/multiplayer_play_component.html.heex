@@ -15,7 +15,7 @@
 			<% end %>
 		<% end %>
 	<% else %>
-		<p>Chance: <span class="font-bold"><%= if @enable_attack, do: "#{@player.name} chance", else: "#{@opponent.name} chance" %></span></p>
+		<p>Chance: <span class="font-bold"><%= if @player.chance, do: "#{@player.name} chance", else: "#{@opponent.name} chance" %></span></p>
 	<% end %>
 
 	<div class="flex flex-col gap-4 justify-center md:flex-row md:gap-10 mb-4">
@@ -35,7 +35,7 @@
 				id="enemy_board"
 				module={BattleshipWeb.GameLive.BoardComponent}
 				gameboard={@opponent.gameboard}
-				enable_edit={@enable_attack}
+				enable_edit={@player.chance}
 				target={@myself}
 				show_ships={false}
 			/>
