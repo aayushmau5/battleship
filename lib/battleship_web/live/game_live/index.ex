@@ -204,13 +204,15 @@ defmodule BattleshipWeb.GameLive.Index do
 
     if count == 2 do
       # a "handshake" step where players send their data to each other
+      player = Player.update_player_status(socket.assigns.player, true)
+
       Phoenix.PubSub.broadcast_from(Battleship.PubSub, self(), room_id, %{
         event: "multiplayer:handshake",
         from: self(),
         opponent: socket.assigns.player
       })
 
-      {:noreply, socket}
+      {:noreply, assign(socket, player: player)}
     else
       left = map_size(leaves)
 
@@ -219,6 +221,7 @@ defmodule BattleshipWeb.GameLive.Index do
         # A player left the game
         {:noreply, assign(socket, game_over: true, player_left: true, player: player)}
       else
+        # Give first chance to user who are waiting
         player = Player.update_player_chance(socket.assigns.player, true)
         # send user to a "waiting room"
         {:noreply, assign(socket, action: :waiting, player: player)}
@@ -253,6 +256,42 @@ defmodule BattleshipWeb.GameLive.Index do
     {:noreply, socket |> assign(:player, player)}
   end
 
+  def handle_info(%{event: "availability-check", topic: topic}, socket) do
+    Phoenix.PubSub.broadcast_from(Battleship.PubSub, self(), topic, %{
+      event: "availability",
+      from: self(),
+      available: !socket.assigns.player.in_game,
+      topic: topic
+    })
+
+    {:noreply, socket}
+  end
+
+  def handle_info(%{event: "availability", available: true, topic: topic}, socket) do
+    BattleshipWeb.Endpoint.unsubscribe(topic)
+
+    send_update(self(), BattleshipWeb.GameLive.PrivateRoomComponent,
+      id: "private-room-component",
+      error: nil
+    )
+
+    send(self(), {:private_room, topic})
+
+    {:noreply, socket}
+  end
+
+  def handle_info(%{event: "availability", available: false, topic: topic}, socket) do
+    send_update(self(), BattleshipWeb.GameLive.PrivateRoomComponent,
+      id: "private-room-component",
+      error: "Ongoing game",
+      room_id: topic
+    )
+
+    BattleshipWeb.Endpoint.unsubscribe(topic)
+
+    {:noreply, socket}
+  end
+
   defp assign_room(socket) do
     case Room.get_room() do
       {:new_room, room_id} ->
@@ -274,9 +313,25 @@ defmodule BattleshipWeb.GameLive.Index do
 
   defp track_multiplayer(socket) do
     topic = socket.assigns.player.room_id
-    BattleshipWeb.Endpoint.subscribe(topic)
-    Presence.track(self(), topic, socket.id, %{room_id: topic})
-    socket
+
+    count = Presence.list(topic) |> map_size()
+
+    if count == 2 do
+      # when 2 players are already in a "room", and another player tries to join
+      socket = assign(socket, action: :private_room)
+
+      send_update(self(), BattleshipWeb.GameLive.PrivateRoomComponent,
+        id: "private-room-component",
+        error: "Ongoing game",
+        room_id: nil
+      )
+
+      socket
+    else
+      BattleshipWeb.Endpoint.subscribe(topic)
+      Presence.track(self(), topic, socket.id, %{room_id: topic})
+      socket
+    end
   end
 
   defp track_player_count(socket) do

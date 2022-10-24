@@ -2,6 +2,7 @@ defmodule BattleshipWeb.GameLive.PrivateRoomComponent do
   use BattleshipWeb, :live_component
 
   alias Battleship.Room
+  alias BattleshipWeb.Presence
 
   @impl true
   def mount(socket) do
@@ -9,25 +10,6 @@ defmodule BattleshipWeb.GameLive.PrivateRoomComponent do
       :ok,
       assign(socket, error: nil, room_id: "")
     }
-  end
-
-  @impl true
-  def handle_event("generate-room-id", _params, socket) do
-    {:noreply, assign(socket, room_id: Room.generate_room_id())}
-  end
-
-  @impl true
-  def handle_event("private-room-join", params, socket) do
-    room_id = params["room-id"]
-
-    case Room.valid_room_id?(room_id) do
-      true ->
-        send(self(), {:private_room, room_id})
-        {:noreply, socket}
-
-      false ->
-        {:noreply, assign(socket, error: "Invalid Room ID", room_id: room_id)}
-    end
   end
 
   @impl true
@@ -54,5 +36,44 @@ defmodule BattleshipWeb.GameLive.PrivateRoomComponent do
       <.btn click="index" to="#home-component" class="mt-6 text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear block mx-auto">Back</.btn>
     </div>
     """
+  end
+
+  @impl true
+  def handle_event("generate-room-id", _params, socket) do
+    {:noreply, assign(socket, room_id: Room.generate_room_id())}
+  end
+
+  @impl true
+  def handle_event("private-room-join", params, socket) do
+    room_id = params["room-id"]
+
+    if Room.valid_room_id?(room_id) do
+      player_count = Presence.list(room_id) |> map_size()
+
+      case player_count do
+        0 ->
+          send(self(), {:private_room, room_id})
+          {:noreply, socket}
+
+        2 ->
+          {:noreply, assign(socket, error: "Room full", room_id: room_id)}
+
+        _ ->
+          send_check_message(room_id)
+          {:noreply, socket}
+      end
+    else
+      {:noreply, assign(socket, error: "Invalid Room ID", room_id: room_id)}
+    end
+  end
+
+  defp send_check_message(topic) do
+    Phoenix.PubSub.subscribe(Battleship.PubSub, topic)
+
+    Phoenix.PubSub.broadcast_from(Battleship.PubSub, self(), topic, %{
+      event: "availability-check",
+      from: self(),
+      topic: topic
+    })
   end
 end

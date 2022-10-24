@@ -2,7 +2,7 @@ defmodule Battleship.Player do
   @moduledoc """
   The player module
   """
-  defstruct name: "", win: false, gameboard: %{}, room_id: nil, chance: false
+  defstruct name: "", win: false, gameboard: %{}, room_id: nil, chance: false, in_game: false
 
   alias Battleship.{Player, Gameboard}
 
@@ -17,6 +17,7 @@ defmodule Battleship.Player do
     |> Map.update!(:win, fn _ -> false end)
     |> Map.update!(:room_id, fn _ -> nil end)
     |> Map.update!(:chance, fn _ -> false end)
+    |> Map.update!(:in_game, fn _ -> false end)
   end
 
   @doc """
@@ -36,5 +37,9 @@ defmodule Battleship.Player do
 
   def update_player_chance(player, chance) do
     Map.update!(player, :chance, fn _ -> chance end)
+  end
+
+  def update_player_status(player, status) do
+    Map.update!(player, :in_game, fn _ -> status end)
   end
 end
