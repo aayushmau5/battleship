@@ -19,6 +19,11 @@ defmodule BattleshipWeb.GameLive.PrivateRoomComponent do
       <h1 class="text-center">Play with another player</h1>
       <button phx-click="generate-room-id" phx-target={@myself} class="text-white my-3 p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear block mx-auto">Generate Room ID</button>
 
+      <%= if @room_id != "" do %>
+        <p class="text-center">Room ID: <span id="room-id-value" class="text-sm break-all"><%= @room_id %></span></p>
+        <button id="copy-button" class="font-bold cursor-pointer bg-none outline-none block mx-auto mb-3" phx-hook="CopyToClipboard">Copy</button>
+      <% end %>
+
       <p class="font-bold text-xl text-center">OR</p>
 
       <div class="mx-auto mb-3">
