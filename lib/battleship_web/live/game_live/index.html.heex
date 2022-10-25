@@ -1,17 +1,22 @@
 <h1 class="text-center font-extrabold text-5xl md:text-6xl lg:text-7xl text-teal-400">Battleship!</h1>
 
 <div class="p-4 mt-10 lg:w-1/2 mx-auto">
-	<%= case {@action, @multiplayer}  do %>
-		<% {:index, _} -> %> <.live_component id="home-component" module={BattleshipWeb.GameLive.HomeComponent} player_count={@player_count} />
+	<%= case @action  do %>
+		<% :index -> %> <.live_component id="home-component" module={BattleshipWeb.GameLive.HomeComponent} player_count={@player_count} />
 
-		<% {:edit, _} -> %> <.live_component id="edit-component" module={BattleshipWeb.GameLive.EditComponent} multiplayer={@multiplayer} />
+		<% :edit -> %> <.live_component id="edit-component" module={BattleshipWeb.GameLive.EditComponent} />
 
-		<% {:howto, _} -> %> <.live_component id="howto-component" module={BattleshipWeb.GameLive.HowToComponent} />
+		<% :howto -> %> <.live_component id="howto-component" module={BattleshipWeb.GameLive.HowToComponent} />
 
-		<% {:waiting, true} -> %> <.live_component id="waiting-component" module={BattleshipWeb.GameLive.WaitingRoomComponent} />
+		<% :private_room -> %> <.live_component id="private-room-component" module={BattleshipWeb.GameLive.PrivateRoomComponent} player={@player} />
 
-		<% {:play, false} -> %> <.live_component id="play-component" module={BattleshipWeb.GameLive.SingleplayerPlayComponent} player={@player} opponent={@opponent} game_over={@game_over} />
+		<% :waiting -> %> <.live_component id="waiting-component" module={BattleshipWeb.GameLive.WaitingRoomComponent} />
 
-		<% {:play, true} -> %> <.live_component id="play-component" module={BattleshipWeb.GameLive.MultiplayerPlayComponent} player={@player} opponent={@opponent} enable_attack={@enable_attack} game_over={@game_over} player_left={@player_left} />
+		<% :play -> %>
+			<%= if @game == :singleplayer do %>
+				<.live_component id="play-component" module={BattleshipWeb.GameLive.SingleplayerPlayComponent} player={@player} opponent={@opponent} game_over={@game_over} />
+			<% else %>
+				<.live_component id="play-component" module={BattleshipWeb.GameLive.MultiplayerPlayComponent} player={@player} opponent={@opponent} game_over={@game_over} player_left={@player_left} />
+			<% end %>
 	<% end %>
 </div>

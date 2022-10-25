@@ -22,10 +22,30 @@ import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 
+let Hooks = {};
+Hooks.CopyToClipboard = {
+  mounted() {
+    this.el.addEventListener("click", async (e) => {
+      const roomIdElement = document.querySelector("#room-id-value");
+      const roomId = roomIdElement.innerHTML;
+      try {
+        await navigator.clipboard.writeText(roomId);
+        this.el.textContent = "Copied";
+        setTimeout(() => {
+          this.el.textContent = "Copy";
+        }, 1000);
+      } catch (err) {
+        console.error("Failed to copy: ", err);
+      }
+    });
+  },
+};
+
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
 let liveSocket = new LiveSocket("/live", Socket, {
+  hooks: Hooks,
   params: { _csrf_token: csrfToken },
 });
 

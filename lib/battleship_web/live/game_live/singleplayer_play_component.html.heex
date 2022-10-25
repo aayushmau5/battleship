@@ -39,5 +39,8 @@
 		</div>
 	</div>
 
-	<.btn click="index" to={"#play-component"} class="mt-2 text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">End game</.btn>
+	<div class="flex gap-4">
+		<.btn click="index" to={"#play-component"} class="mt-2 text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear">End game</.btn>
+		<.btn click="play-again" to={"#play-component"} disabled={!@game_over} class="mt-2 text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear disabled:cursor-not-allowed disabled:bg-stone-700">Play again</.btn>
+	</div>
 </div>
