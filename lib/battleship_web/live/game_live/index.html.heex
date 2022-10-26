@@ -2,7 +2,7 @@
 
 <div class="p-4 mt-10 lg:w-1/2 mx-auto">
 	<%= case @action  do %>
-		<% :index -> %> <.live_component id="home-component" module={BattleshipWeb.GameLive.HomeComponent} player_count={@player_count} />
+		<% :index -> %> <.live_component id="home-component" module={BattleshipWeb.GameLive.HomeComponent} player={@player} player_count={@player_count} />
 
 		<% :edit -> %> <.live_component id="edit-component" module={BattleshipWeb.GameLive.EditComponent} />
 

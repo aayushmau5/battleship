@@ -1,7 +1,7 @@
 defmodule BattleshipWeb.GameLive.Index do
   use BattleshipWeb, :live_view
 
-  alias Battleship.{Gameboard, Room, Player, Computer}
+  alias Battleship.{Gameboard, Room, Player, Computer, Player.Name}
   alias BattleshipWeb.Presence
 
   @player_count_topic "player-join"
@@ -16,7 +16,7 @@ defmodule BattleshipWeb.GameLive.Index do
      |> assign(
        action: :index,
        game: :singleplayer,
-       player: Player.new(),
+       player: Player.new(Name.generate()),
        opponent: %Player{},
        game_over: false,
        player_left: false
@@ -103,6 +103,12 @@ defmodule BattleshipWeb.GameLive.Index do
     BattleshipWeb.Endpoint.unsubscribe(room_id)
     Presence.untrack(self(), room_id, socket.id)
     {:noreply, assign(socket, action: :play, game: :singleplayer)}
+  end
+
+  @impl true
+  def handle_info({:change_player_name, player_name}, socket) do
+    player = Player.update_player_name(socket.assigns.player, player_name)
+    {:noreply, assign(socket, player: player)}
   end
 
   @impl true
