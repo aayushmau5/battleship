@@ -6,7 +6,8 @@ defmodule BattleshipWeb.GameLive.Index do
 
   @player_count_topic "player-join"
 
-  @type action() :: :index | :edit | :howto | :private_room | :waiting | :play
+  @type action() ::
+          :index | :multiplayer_choice | :edit | :howto | :private_room | :waiting | :play
   @type game() :: :singleplayer | :multiplayer | :private
 
   @impl true
@@ -80,6 +81,10 @@ defmodule BattleshipWeb.GameLive.Index do
   @impl true
   def handle_event("private-room", _params, socket),
     do: {:noreply, assign(socket, action: :private_room)}
+
+  @impl true
+  def handle_event("multiplayer-choice", _params, socket),
+    do: {:noreply, assign(socket, action: :multiplayer_choice)}
 
   @impl true
   def handle_event("multiplayer", _params, socket),

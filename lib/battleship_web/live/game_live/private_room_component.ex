@@ -15,7 +15,7 @@ defmodule BattleshipWeb.GameLive.PrivateRoomComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="animate-fade-in" id="#private-room-component">
+    <div class="animate-fade-in" id="private-room-component">
       <h1 class="text-center">Play with another player</h1>
       <button phx-click="generate-room-id" phx-target={@myself} class="text-white my-3 p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear block mx-auto">Generate Room ID</button>
 
@@ -38,7 +38,7 @@ defmodule BattleshipWeb.GameLive.PrivateRoomComponent do
           <button type="submit" class="text-white mt-3 p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear block mx-auto">Join Room</button>
         </form>
       </div>
-      <.btn click="index" to="#home-component" class="mt-6 text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear block mx-auto">Back</.btn>
+      <.btn click="multiplayer-choice" to="#private-room-component" class="mt-6 text-white p-2 rounded bg-teal-600 hover:bg-teal-500 font-bold transition-all ease-linear block mx-auto">Back</.btn>
     </div>
     """
   end

@@ -4,6 +4,8 @@
 	<%= case @action  do %>
 		<% :index -> %> <.live_component id="home-component" module={BattleshipWeb.GameLive.HomeComponent} player={@player} player_count={@player_count} />
 
+		<% :multiplayer_choice -> %> <.live_component id="multiplayer-choice-component" module={BattleshipWeb.GameLive.MultiplayerChoiceComponent} player={@player} />
+
 		<% :edit -> %> <.live_component id="edit-component" module={BattleshipWeb.GameLive.EditComponent} />
 
 		<% :howto -> %> <.live_component id="howto-component" module={BattleshipWeb.GameLive.HowToComponent} />
