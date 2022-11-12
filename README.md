@@ -6,6 +6,7 @@ You can:
 
 - Play against computer
 - Play against another player in real-time
+- Create private rooms to play against a particular player
 
 ## Deployment
 
@@ -29,5 +30,22 @@ Checkout the setup guide for Phoenix: https://hexdocs.pm/phoenix/installation.ht
 
 ## TODO
 
-- Add flow diagram in README
-- Ability to invite other player(through a room)
+- Refactor game logic and main game server
+- Add internal workings in readme
+
+<!-- ### Workflow
+
+Phoenix creates a process for each client connected to the server, so we use process to process communication through Phoenix PubSub.
+
+Here's a high level overview of how it works:
+
+![High level overview](https://user-images.githubusercontent.com/54525741/199268118-fc78a57c-883a-4533-ac6f-5969d45b8797.png)
+
+Having every client with their own process unlocks a powerful way of organizing the workflow.
+
+With the help of Phoenix Presence, and Phoenix PubSub
+
+// More details here
+// About handshake
+// About generating room
+// About know full room -->
