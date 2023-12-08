@@ -8,9 +8,10 @@ processes = []
 [env]
   PHX_HOST = "aayush-battleship.fly.dev"
   PORT = "8080"
+  RELEASE_COOKIE = "59YpC0na-heDJtd8urKDYMwp6uAw-DAqVLahqKxJCj7DzsF7Cvh87Q=="
 
 [experimental]
-  allowed_public_ports = []
+  private_network = true
   auto_rollback = true
 
 [[services]]
