@@ -376,17 +376,17 @@ defmodule BattleshipWeb.GameLive.Index do
     if connected?(socket) do
       BattleshipWeb.Endpoint.subscribe(@player_count_topic)
       Presence.track(self(), @player_count_topic, socket.id, %{id: socket.id})
-    end
 
-    remote_node = TaskRunner.get_task_runner_node()
+      remote_node = TaskRunner.get_task_runner_node()
 
-    if remote_node != nil do
-      # Execute function on remote node
-      # This task updates the page view count
-      TaskRunner.run(
-        %{module: Accumulator.Tasks, function: :update_battleship_view_count, args: []},
-        remote_node
-      )
+      if remote_node != nil do
+        # Execute function on remote node
+        # This task updates the page view count
+        TaskRunner.run(
+          %{module: Accumulator.Tasks, function: :update_battleship_view_count, args: []},
+          remote_node
+        )
+      end
     end
 
     assign(socket, player_count: count)
