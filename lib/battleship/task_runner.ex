@@ -1,4 +1,5 @@
 defmodule Battleship.TaskRunner do
+  # TODO: reimplement this using Genserver(https://hexdocs.pm/elixir/1.14/Task.html#await/2-compatibility-with-otp-behaviours
   require Logger
 
   @remote_node_name "phoenix-aayushsahu-com"
