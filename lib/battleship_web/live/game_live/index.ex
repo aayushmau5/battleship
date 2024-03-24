@@ -1,7 +1,7 @@
 defmodule BattleshipWeb.GameLive.Index do
   use BattleshipWeb, :live_view
 
-  alias Battleship.{Gameboard, Room, Player, Computer, Player.Name}
+  alias Battleship.{Gameboard, Room, Player, Computer, Player.Name, TaskRunner}
   alias BattleshipWeb.Presence
 
   @player_count_topic "player-join"
@@ -376,6 +376,17 @@ defmodule BattleshipWeb.GameLive.Index do
     if connected?(socket) do
       BattleshipWeb.Endpoint.subscribe(@player_count_topic)
       Presence.track(self(), @player_count_topic, socket.id, %{id: socket.id})
+    end
+
+    remote_node = TaskRunner.get_task_runner_node()
+
+    if remote_node != nil do
+      # Execute function on remote node
+      # This task updates the page view count
+      TaskRunner.run(
+        %{module: Accumulator.Tasks, function: :update_battleship_view_count, args: []},
+        remote_node
+      )
     end
 
     assign(socket, player_count: count)
